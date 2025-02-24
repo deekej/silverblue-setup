@@ -1,0 +1,483 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+# Shared configuration between all Silverblue installations
+
+# Machine reboot configuration:
+reboot_timeout:     1800
+post_reboot_delay:  15
+pre_reboot_delay:   5
+
+# ---| Default User Configuration |--------------------------------------------
+displayed_name: Dee'Kej
+username:       deekej
+homedir:        /var/home/{{ username }}
+
+user_id:        117813
+group_id:       117813
+
+subuid_start:   10240
+subgid_start:   10240
+
+# NOTE: Yes, I'm using the same password on both latop & desktop. Sue me! :D
+user_login_shell:     /bin/zsh
+user_password_plain:  !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  65313930313034366532353638333263613531363062646265326135363165613764643238313761
+  3265373339383832396432613239663931383131346666320a653261356431643732396537373936
+  64366334356338396132396166666433363266326433343064623935306630373331306264383065
+  6534356337663735380a346164613838363332663937376463623833303161363061346138666634
+  3538
+
+root_login_shell:     /bin/zsh
+root_password_plain:  !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  65313930313034366532353638333263613531363062646265326135363165613764643238313761
+  3265373339383832396432613239663931383131346666320a653261356431643732396537373936
+  64366334356338396132396166666433363266326433343064623935306630373331306264383065
+  6534356337663735380a346164613838363332663937376463623833303161363061346138666634
+  3538
+
+# ---| Kickstart File Configuration |------------------------------------------
+kickstart_setup_password: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  36353262363239646137303934656638386566303233366134333466666430663763656563346235
+  3436646164666165656535323635656461616433646630360a323334326165626239326532613037
+  31393365386136336565353666383961616634356338383739633435346430373431323834313838
+  3562343439396538310a656266316132613039666435353436343064643336636337636433383933
+  3564
+
+kickstart_fedora_arch: x86_64
+
+kickstart_system_language: en_US.UTF-8
+kickstart_keyboard_layout: cz
+
+kickstart_time_server: time.cloudflare.com
+kickstart_time_zone: Europe/Prague
+kickstart_time_nts: true
+
+kickstart_setup_pubkey: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIzl27MyyzdjKSHvBpFYmILPkjlfr/DAAXNa9Hcc1L+o admin@deekej.io"
+
+kickstart_services_disabled:
+  - NetworkManager-wait-online
+
+kickstart_services_enabled:
+  - sshd
+
+# ---| Partitions Configuration |----------------------------------------------
+kickstart_subvolumes:
+  - path: "/var/home/{{ username }}"
+    name: "{{ username }}"
+
+  - path: "/var/home/{{ username }}/.backups"
+    name: "{{ username }}.backups"
+
+  - path: "/var/home/{{ username }}/.cache"
+    name: "{{ username }}.cache"
+
+  - path: "/var/home/{{ username }}/.local/share/containers"
+    name: "{{ username }}.containers"
+
+  - path: "/var/home/{{ username }}/.var"
+    name: "{{ username }}.var"
+
+  - path: "/var/home/{{ username }}/build"
+    name: "{{ username }}.build"
+
+  - path: "/var/home/{{ username }}/devel"
+    name: "{{ username }}.devel"
+
+  - path: "/var/home/{{ username }}/Documents"
+    name: "{{ username }}.documents"
+
+  - path: "/var/home/{{ username }}/Downloads"
+    name: "{{ username }}.downloads"
+
+  - path: "/var/home/{{ username }}/Dropbox"
+    name: "{{ username }}.dropbox"
+
+  - path: "/var/home/{{ username }}/Music"
+    name: "{{ username }}.music"
+
+  - path: "/var/home/{{ username }}/Pictures"
+    name: "{{ username }}.pictures"
+
+  - path: "/var/home/{{ username }}/Videos"
+    name: "{{ username }}.videos"
+
+tmpfs_size: 24G
+
+btrfs_subvolumes:
+  - "{{ username }}"
+  - "{{ username }}.backups"
+  - "{{ username }}.build"
+  - "{{ username }}.cache"
+  - "{{ username }}.containers"
+  - "{{ username }}.var"
+  # ---------------------------
+  - "{{ username }}.devel"
+  - "{{ username }}.documents"
+  - "{{ username }}.downloads"
+  - "{{ username }}.dropbox"
+  - "{{ username }}.music"
+  - "{{ username }}.pictures"
+  - "{{ username }}.videos"
+
+btrfs_subvolumes_owner_only:
+  - "{{ username }}"
+  - "{{ username }}.backups"
+  - "{{ username }}.cache"
+
+btrfs_subvolumes_nodatacow:
+  - "{{ username }}.backups"
+  - "{{ username }}.build"
+  - "{{ username }}.cache"
+  - "{{ username }}.containers"
+  - "{{ username }}.downloads"
+
+btrfs_subvolumes_noarchive:
+  - "{{ username }}.backups"
+  - "{{ username }}.build"
+  - "{{ username }}.cache"
+  - "{{ username }}.containers"
+  - "{{ username }}.var"
+
+# NOTE: Do NOT create .snapshots/ subfolder! Existing subfolder prevents
+#       creation of BTRFS subvolume by snapper...
+home_subfolders:
+  - path: .backups
+    mode: '0700'
+
+  - path: .bash
+    mode: '0755'
+
+  - path: .cache
+    mode: '0700'
+
+  - path: .var
+    mode: '0700'
+
+  - path: .config
+    mode: '0700'
+
+  - path: .config/git
+    mode: '0755'
+
+  - path: .config/dconf
+    mode: '0700'
+
+  - path: .local
+    mode: '0700'
+
+  - path: .local/share
+    mode: '0700'
+
+  - path: .ssh
+    mode: '0700'
+
+  - path: .vim
+    mode: '0755'
+
+  - path: .zsh
+    mode: '0755'
+
+  # --------------
+
+  - path: build
+    mode: '0755'
+
+  - path: devel
+    mode: '0755'
+
+  - path: Documents
+    mode: '0755'
+
+  - path: Downloads
+    mode: '0755'
+
+  - path: Dropbox
+    mode: '0755'
+
+  - path: Music
+    mode: '0755'
+
+  - path: Pictures
+    mode: '0755'
+
+  - path: Videos
+    mode: '0755'
+
+  # ---| Cache Folders |-------------------------------------------------------
+  - path: .cache/spotify
+    mode: '0755'
+
+# ---| Layered packages configuration |----------------------------------------
+repos_to_enable:
+  - fedora-steam.repo
+
+repos_to_disable:
+  - '_copr:copr.fedorainfracloud.org:phracek:PyCharm.repo'
+
+base_packages_to_remove:
+  - ptyxis
+
+packages_to_remove: []
+
+packages_extra_user:
+  - nemo
+  - nemo-emblems
+  - nemo-extensions
+  - nemo-fileroller
+  - nemo-seahorse
+
+packages_extra_work:
+  - krb5-workstation
+  - openldap-clients
+  - pass
+  - pass-otp
+  - screen
+  - slack
+  - virt-manager
+  - virt-viewer           # temporary until Gnome Connections supports SPICE
+
+packages_extra_theme:
+  - breeze-cursor-theme
+
+packages_extra_codecs:
+  - gstreamer1-plugin-openh264
+
+packages_extra_plugins: []
+
+packages_extra_utilities:
+  - ascii
+  - asciinema
+  - autojump-zsh
+  - cowsay
+  - code
+  - ctags
+  - fortune-mod
+  - fzf
+  - gh
+  - peek
+  - python-msgpack
+  - python-neovim
+  - rar
+  - screenkey
+  - thefuck
+  - wavemon
+  - wmctrl
+  - youtube-dl
+  - zsh-autosuggestions
+  - zsh-lovers
+  - zsh-syntax-highlighting
+
+# ---| Flatpak packages configuration |----------------------------------------
+flatpak_packages_to_remove:
+  - com.gexperts.Tilix                    # Installed as RPM
+  - org.gnome.Extensions                  # Installed as RPM
+  - org.gnome.TextEditor                  # Not needed
+
+# NOTE: In case of failure of flatpak packages installation, you might
+#       (most likely) need to specify which branch to use - after the slashes: //
+flatpak_packages_extra_user:
+  - com.bitwarden.desktop                 # Bitwarden Desktop App
+  - com.spotify.Client                    # Music Streamer
+  - me.proton.Mail                        # Proton Mail / Calendar Desktop App
+  - org.gnome.EasyTAG                     # ID3 editor for MP3
+  - org.gimp.GIMP                         # Graphical Editor
+  - org.inkscape.Inkscape                 # Vector Editor
+  - org.soundconverter.SoundConverter     # Sound Converter
+  - org.telegram.desktop                  # Instant Messaging App
+  - org.tenacityaudio.Tenacity            # FOSS replacement of Audacity
+
+flatpak_packages_extra_work: []
+
+# Runtimes for additional themes:
+flatpak_packages_extra_theme: []
+
+# Codecs for VLC/Firefox in flatpak:
+flatpak_packages_extra_codecs: []
+#  # NOTE: Update these codecs to latest runtimes before running the playbook.
+#  - org.freedesktop.Platform.ffmpeg-full/x86_64/24.08
+#  - org.freedesktop.Platform.openh264/x86_64/2.4.1
+
+flatpak_packages_extra_runtimes:
+  - org.telegram.desktop.webview
+
+flatpak_custom_icons:       true
+flatpak_custom_icons_theme: Flat-Remix-Violet-Dark
+
+flatpak_custom_gtk_themes:  true
+flatpak_custom_gtk_theme:   Flat-Remix-GTK-Violet-Dark
+
+# ---| System configuration |--------------------------------------------------
+etckeeper_git_name:   Dee'Kej
+etckeeper_git_email:  admin@deekej.io
+
+passwordless_sudo:    true
+
+TPM_config:           false
+laptop_config:        false
+redhat_work_config:   true
+
+# Start week on Monday:
+locale_LC_TIME:       en_GB.UTF-8
+
+# ---| Tweaks configuration |--------------------------------------------------
+tweaks_repos:
+  root:
+    - repo:             git@github.com:deekej/usr.local.git
+      dest:             /usr/local
+
+    - repo:             git@github.com:deekej/root.home.git
+      dest:             /root
+
+    - repo:             git@github.com:deekej/profile.d.git
+      dest:             /etc/profile.d
+
+  user:
+    - repo:             git@github.com:deekej/home.dir.git
+      dest:             /var/home/deekej
+
+    - repo:             git@github.com:deekej/bash.config.git
+      dest:             /var/home/deekej/.bash
+
+    - repo:             git@github.com:deekej/zsh.config.git
+      dest:             /var/home/deekej/.zsh
+
+    - repo:             git@github.com:deekej/ssh.config.git
+      dest:             /var/home/deekej/.ssh
+
+    - repo:             git@github.com:deekej/git.config.git
+      dest:             /var/home/deekej/.config/git
+
+    - repo:             git@github.com:deekej/vim-ultimate-IDE.git
+      dest:             /var/home/deekej/.vim
+
+usr_local_binaries:
+  - pcloud
+  - timeular
+  - winbox
+
+# NOTE: This will reset the files / folders attributes after their contents
+#       have been restored via cloning their corresponding GIT repositories...
+files_attributes:
+  root:
+    # ---| folders |------------------------------------------------------------
+    - path: /root/.git
+      mode: '0700'
+
+    - path: /root/.ssh
+      mode: '0700'
+
+    - path: /usr/local/.git
+      mode: '0700'
+
+    # ---| files |-------------------------------------------------------------
+    - path: /root/.ssh/config
+      mode: '0600'
+
+    - path: /root/.ssh/known_hosts
+      mode: '0600'
+
+    - path: /root/.ssh/authorized_keys
+      mode: '0600'
+
+    - path: /usr/local/LICENSE
+      mode: '0600'
+
+    - path: /usr/local/.gitignore
+      mode: '0600'
+
+    - path: /usr/local/.gitattributes
+      mode: '0600'
+
+  user:
+    # ---| folders |------------------------------------------------------------
+    - path: /var/home/{{ username }}/.config
+      mode: '0700'
+
+    - path: /var/home/{{ username }}/.local
+      mode: '0700'
+
+    - path: /var/home/{{ username }}/.ssh
+      mode: '0700'
+
+    - path: /var/home/{{ username }}/.ssh/.git
+      mode: '0700'
+
+    - path: /var/home/{{ username }}/.ssh/public-keys
+      mode: '0700'
+
+    # ---| files |-------------------------------------------------------------
+    - path: /var/home/{{ username }}/.ssh/.gitignore
+      mode: '0600'
+
+    - path: /var/home/{{ username }}/.ssh/.post-checkout.hook
+      mode: '0600'
+
+    - path: /var/home/{{ username }}/.ssh/public-keys/admin.pub
+      mode: '0600'
+
+    - path: /var/home/{{ username }}/.ssh/public-keys/devel.pub
+      mode: '0600'
+
+    - path: /var/home/{{ username }}/.ssh/public-keys/fedora.pub
+      mode: '0600'
+
+    - path: /var/home/{{ username }}/.ssh/public-keys/redhat.pub
+      mode: '0600'
+
+    - path: /var/home/{{ username }}/.ssh/public-keys/.gitkeep
+      mode: '0600'
+
+    - path: /var/home/{{ username }}/.ssh/README.md
+      mode: '0600'
+
+    - path: /var/home/{{ username }}/.ssh/authorized_keys
+      mode: '0600'
+
+    - path: /var/home/{{ username }}/.ssh/config
+      mode: '0600'
+
+vundle_plugins_install:
+  root: true
+  user: true
+
+# ---| GNOME configuration |---------------------------------------------------
+dconf_tracked_schemas:
+  - ca.desrt.dconf-editor
+  - com.gexperts.Tilix
+  - com.uploadedlobster.peek
+  - org.cinnamon.desktop
+  - org.fedorahosted.background-logo-extension
+  - org.gnome.GPaste
+  - org.gnome.desktop.a11y
+  - org.gnome.desktop.applications.terminal
+  - org.gnome.desktop.background
+  - org.gnome.desktop.calendar
+  - org.gnome.desktop.datetime
+  - org.gnome.desktop.interface
+  - org.gnome.desktop.media-handling
+  - org.gnome.desktop.peripherals
+  - org.gnome.desktop.privacy
+  - org.gnome.desktop.screensaver
+  - org.gnome.desktop.search-providers
+  - org.gnome.desktop.session
+  - org.gnome.desktop.sound
+  - org.gnome.desktop.wm.keybindings
+  - org.gnome.desktop.wm.preferences
+  - org.gnome.evolution.calendar
+  - org.gnome.file-roller
+  - org.gnome.gnome-system-monitor
+  - org.gnome.mutter
+  - org.gnome.nautilus
+  - org.gnome.settings-daemon
+  - org.gnome.shell
+  - org.gnome.software
+  - org.gnome.system.location
+  - org.gnome.tweaks
+  - org.gtk
+  - org.nemo
+  - org.virt-manager.virt-manager
+  - system.proxy

@@ -1,0 +1,30 @@
+[realms]
+    # Define the Kerberos realms and associated servers
+
+    # Make sure to save the Red Hat's IPA CA certificate:
+    # $ mkdir /etc/ipa && curl -o /etc/ipa/ca.crt https://password.corp.redhat.com/ipa.crt
+    IPA.REDHAT.COM = {
+        default_domain = ipa.redhat.com
+
+        # Use PKI for kerberos preauthentication
+        pkinit_anchors = FILE:/etc/ipa/ca.crt
+        pkinit_pool = FILE:/etc/ipa/ca.crt
+
+        # Trust tickets issued by legacy realm on this host
+        auth_to_local = RULE:[1:$1@$0](.*@REDHAT\.COM)s/@.*//
+        auth_to_local = DEFAULT
+    }
+
+    REDHAT.COM = {
+        default_domain = redhat.com
+
+        # Admin server - the legacy MIT Kerberos realm only supports one
+        admin_server = kerberos.corp.redhat.com:749
+
+        # Master KDC is used if your password change has
+        # not propagated to all the slaves
+        master_kdc = kerberos.corp.redhat.com:88
+    }
+
+# DO NOT ADD A [domain_realm] section!!!
+# https://source.redhat.com/groups/public/identity-access-management/identity__access_management_wiki/how_to_kerberos_realm_referrals

@@ -1,0 +1,44 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+# Configuration (variables) for Normandy-SR3 [Desktop]
+
+hostname_FQDN:  Normandy-SR3.deekej.io
+
+kickstart_network_hostname: Normandy-SR3.deekej.io
+kickstart_network_devices:
+  - enp5s0
+
+# NOTE: The disk id needs to be manually specified before every installation!!
+kickstart_disk_id: ata-WDC_WDS500G1R0A-68A4W0_23464V801616
+
+# ---| Partitions Configuration |----------------------------------------------
+NTFS_mounts:  true
+
+NTFS_mount_points:
+  - device:       /dev/sda1
+    mount_point:  /mnt/Downloads
+
+  - device:       /dev/sdb2
+    mount_point:  /mnt/Storage
+
+  - device:       /dev/sdc1
+    mount_point:  /mnt/Scratch
+
+# ---| Flatpak packages configuration |----------------------------------------
+# NOTE: In case of failure of flatpak packages installation, you might
+#       (most likely) need to specify which branch to use - after the slashes: //
+
+flatpak_packages_extra_user:
+  - com.spotify.Client                    # Music Streamer
+  - org.soundconverter.SoundConverter     # Sound Converter
+  - org.gnome.EasyTAG                     # ID3 editor for MP3
+  - org.gimp.GIMP                         # Graphical Editor
+  - org.inkscape.Inkscape                 # Vector Editor
+  - org.telegram.desktop                  # Instant Messaging App
+  - org.qbittorrent.qBittorrent           # BitTorrent Client
+
+# ---| System configuration |--------------------------------------------------
+laptop_config:        false
+redhat_work_config:   true
+#CUPS_on_LDAP_server:  false

@@ -1,0 +1,17 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+# Default system configuration:
+
+etckeeper_git_name:   "{{ username }}"
+etckeeper_git_email:  "{{ username }}@{{ hostname_FQDN }}"
+
+passwordless_sudo:    false
+
+colordiff_lighter:    true
+
+laptop_config:        false
+redhat_work_config:   false
+
+locale_LANG:          en_US.UTF-8
+locale_LC_TIME:       None

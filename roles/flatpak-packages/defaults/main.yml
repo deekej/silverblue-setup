@@ -1,0 +1,59 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+
+flatpak_remote_enable_fedora:           true
+flatpak_remote_enable_flathub:          true
+flatpak_remote_enable_kdeapps:          false
+
+flatpak_remote_enable_flathub_beta:     false
+
+flatpak_remote_enable_gnome_nightly:    false
+flatpak_remote_enable_eclipse_nightly:  false
+
+flatpak_custom_icons:                   false
+flatpak_custom_gtk_themes:              false
+
+# -----------------------------------------------------------------------------
+
+flatpak_packages_to_remove: []
+
+flatpak_packages_default:
+  - com.github.tchx84.Flatseal              # Permissions management for Flatpak Apps
+  - org.fedoraproject.MediaWriter           # Live USB Creator
+  - org.gnome.baobab                        # Disk Usage Analyzer
+  - org.gnome.DejaDup                       # Backup Software
+
+flatpak_packages_fedora_default:
+  - org.fedoraproject.FirewallConfig        # Firewalld GUI App
+
+# In case someone doesn't want some of the default packages installed:
+flatpak_packages_default_mask: []
+
+# Additional packages that can be specified by the user:
+flatpak_packages_extra_user: []
+flatpak_packages_extra_work: []
+
+# Additional packages only available in 'fedora' remote:
+flatpak_packages_extra_fedora: []
+
+flatpak_packages_extra_theme:
+  - org.kde.KStyle.Adwaita                  # Support for default QT theming (Adwaita)
+  - org.kde.PlatformTheme.QGnomePlatform    # Support for default QT theming (Adwaita)
+
+flatpak_packages_extra_codecs: []
+flatpak_packages_extra_plugins: []
+flatpak_packages_extra_runtimes: []
+flatpak_packages_extra_utilities: []
+
+# List of default system flatpak packages for which we track their configuration:
+flatpak_packages_extra_system:
+  - org.gnome.Calculator
+  - org.gnome.Calendar
+  - org.gnome.Connections
+  - org.gnome.Contacts
+  - org.gnome.Evince
+  - org.gnome.Maps
+  - org.gnome.Snapshot
+  - org.gnome.clocks
+

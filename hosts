@@ -1,0 +1,24 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+all:
+  hosts:
+    controller:
+      ansible_host:           localhost
+      ansible_connection:     local
+
+    Normandy-SR3:
+      ansible_host:           192.168.42.32
+
+    Normandy-SRX:
+      ansible_host:           192.168.42.34
+
+  # Global options for all the hosts (overriden by host-specific variables):
+  vars:
+    ansible_user:             root
+    ansible_connection:       ssh
+    ansible_ssh_common_args:  |-
+      -o StrictHostKeyChecking=accept-new
+      -o GSSAPIKeyExchange=no
+      -o GSSAPIAuthentication=no
+      -o GSSAPIDelegateCredentials=no

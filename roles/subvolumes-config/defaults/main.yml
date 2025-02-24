@@ -1,0 +1,55 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+# defaults file for roles/subvolumes-configuration
+
+tmpfs_size:         12G
+btrfs_mount_point:  /mnt/btrfs
+
+btrfs_subvolumes:
+  - "{{ username }}"
+  - "{{ username }}.backups"
+  - "{{ username }}.cache"
+  - "{{ username }}.containers"
+  - "{{ username }}.var"
+
+btrfs_subvolumes_owner_only:
+  - "{{ username }}"
+  - "{{ username }}.backups"
+  - "{{ username }}.cache"
+  - "{{ username }}.var"
+
+btrfs_subvolumes_nodatacow:
+  - "{{ username }}.backups"
+  - "{{ username }}.cache"
+  - "{{ username }}.downloads"
+
+# NOTE: Do NOT create .snapshots/ subfolder! Existing subfolder prevents
+#       creation of BTRFS subvolume by snapper...
+home_subfolders:
+  - path: .backups
+    mode: '0700'
+
+  - path: .cache
+    mode: '0700'
+
+  - path: .var
+    mode: '0700'
+
+  - path: .config
+    mode: '0700'
+
+  - path: .local
+    mode: '0700'
+
+  - path: .local/share
+    mode: '0700'
+
+grub_timeout: 6
+grub_gfx_mode: 1920x1080,1280x800,1024x768,1280x1024,auto
+
+NTFS_mounts: false
+
+NTFS_mount_points:
+  - device:       None
+    mount_point:  None

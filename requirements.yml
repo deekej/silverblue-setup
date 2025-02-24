@@ -1,0 +1,11 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+# Used to manage Ansible roles / modules dependencies. More info:
+# http://docs.ansible.com/galaxy.html#installing-multiple-roles-from-a-file
+#
+# Install the dependencies with:
+# $ ansible-galaxy install -r requirements.yml
+
+roles: []
+collections: []

@@ -1,0 +1,9 @@
+# Files to ignore:
+.ansible.log
+ansible*/
+vault/*
+tmp/*
+.env*
+
+# Files to track (force):
+! vault/.gitkeep

@@ -1,0 +1,31 @@
+---
+# vim: filetype=yaml
+# code: language=yaml
+# -------------------
+
+# https://ansible-lint.readthedocs.io/profiles
+profile: production
+
+use_default_rules: true
+
+# Offline mode disables installation of requirements.yml and schema refreshing
+offline: true
+
+# Return success if number of violations compared with previous git
+# commit has not increased. This feature works only in git
+# repositories.
+progressive: true
+
+# Allow the usage of capitalized variables:
+var_naming_pattern: '^[a-zA-Z_][a-zA-Z0-9_]*$'
+
+# These checks below are skipped:
+skip_list:
+  - name[template]
+  - role-name
+  - yaml[colons]
+  - yaml[line-length]
+  - var-naming[no-role-prefix]
+
+exclude_paths:
+  - .ansible-lint                       # Self-reference...

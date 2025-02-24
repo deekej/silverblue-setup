@@ -1,0 +1,10 @@
+[Unit]
+Description=Set F-keys (F1-F12) as a default keys for Keychron
+
+[Service]
+Type=oneshot
+RemainAfterExit=no
+ExecStart=/usr/bin/bash -c '[ -w /sys/module/hid_apple/parameters/fnmode ] && echo 2 > /sys/module/hid_apple/parameters/fnmode || :'
+
+[Install]
+WantedBy=multi-user.target

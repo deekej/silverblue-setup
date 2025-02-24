@@ -1,0 +1,22 @@
+[dialogs/new]
+default-extension='.tar.xz'
+expand-options=true
+
+[file-selector]
+show-hidden=false
+sidebar-size=300
+sort-method='name'
+sort-type='ascending'
+window-size=(-1, -1)
+
+[listing]
+list-mode='as-folder'
+name-column-width=756
+show-path=false
+sort-method='name'
+sort-type='ascending'
+
+[ui]
+sidebar-width=200
+window-height=597
+window-width=1306

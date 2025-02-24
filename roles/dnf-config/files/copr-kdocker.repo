@@ -1,0 +1,10 @@
+[copr:KDocker]
+name=Copr repo for KDocker owned by 'name'
+enabled=1
+enabled_metadata=1
+skip_if_unavailable=1
+baseurl=https://download.copr.fedorainfracloud.org/results/name/KDocker/fedora-$releasever-$basearch/
+type=rpm-md
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-copr-kdocker

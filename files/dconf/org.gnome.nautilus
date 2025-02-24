@@ -1,0 +1,18 @@
+[compression]
+default-compression-format='tar.xz'
+
+[icon-view]
+default-zoom-level='standard'
+
+[list-view]
+default-visible-columns=['name', 'size', 'date_modified', 'starred']
+
+[preferences]
+default-folder-viewer='icon-view'
+migrated-gtk-settings=true
+search-filter-time-type='last_modified'
+
+[window-state]
+initial-size=(890, 550)
+initial-size-file-chooser=(890, 550)
+maximized=false

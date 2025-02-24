@@ -1,0 +1,160 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+
+- name: Configure a (freshly installed) Fedora Silverblue machine
+  hosts: "{{ host }}"
+
+  pre_tasks:
+    - name: Ensure we use the correct hostname
+      delegate_to: controller
+      tags: always
+      block:
+        - name: Check the config file exists for "{{ ansible_hostname }}"
+          stat:
+            path: "host_vars/{{ ansible_hostname }}.yml"
+          register: config_path
+          changed_when: false
+
+        - name: Fail if the config file does not exist
+          fail:
+            msg: "host_vars/{{ ansible_hostname }}.yml config file does not exist. Is the correct host set?"
+          when: not config_path.stat.exists
+
+    - name: Check if the initial setup was previously finished
+      lineinfile:
+        path: /etc/.initial-setup
+        state: absent
+        search_string: DONE
+      register: initial_setup_check
+      check_mode: true
+      failed_when: false
+      changed_when: false
+
+    - name: Set the 'initial_setup' variable accordingly
+      set_fact:
+        initial_setup: "{{ (initial_setup_check.found|bool) | ternary(false, true) }}"
+
+    - name: Initialize the remote_tmp [~/.ansible/tmp] folder // root
+      file:
+        path:     /root/.ansible/tmp
+        state:    directory
+        recurse:  true
+        owner:    root
+        group:    root
+        mode:     '0700'
+
+    - name: Initialize the remote_tmp [~/.ansible/tmp] folder // user
+      file:
+        path:     "/var/home/{{ (initial_setup|bool) | ternary('setup', username) }}/.ansible/tmp"
+        state:    directory
+        recurse:  true
+        owner:    "{{ (initial_setup|bool) | ternary('setup', username) }}"
+        group:    "{{ (initial_setup|bool) | ternary('setup', username) }}"
+        mode:     '0700'
+
+    - name: Prevent the host to suspend while we run this playbook
+      systemd_service:
+        name:     suspend.target
+        masked:   true
+        force:    true
+
+    - name: Disable automatic Gnome Software updates to prevent interruptions // root
+      shell:        gsettings get org.gnome.software allow-updates && gsettings set org.gnome.software allow-updates false
+      register:     gsettings
+      failed_when:  gsettings.rc != 0
+      changed_when: gsettings.stdout == 'true'
+
+    - name: Disable automatic Gnome Software updates to prevent interruptions // user
+      shell:        gsettings get org.gnome.software allow-updates && dbus-run-session gsettings set org.gnome.software allow-updates false
+      register:     gsettings
+      failed_when:  gsettings.rc != 0
+      changed_when: gsettings.stdout == 'true'
+      become:       true
+      become_user:  "{{ (initial_setup|bool) | ternary('setup', username) }}"
+      environment:
+        DISPLAY:    '0:'
+
+    # ---| TEMPORARY WORKAROUNDS / FIXES |-------------------------------------
+
+    # NOTE: Temporary workaround - expected to be fixed in Fedora 42.
+    #       https://gitlab.com/fedora/ostree/sig/-/issues/6
+    - name: Use the correct keyboard layout when unlocking the LUKS partition [WORKAROUND / FIX]
+      shell: rpm-ostree cancel &> /dev/null && rpm-ostree initramfs-etc --track=/etc/vconsole.conf
+      register: command
+      changed_when: "'No changes.' not in command.stdout"
+
+    - name: REBOOT INFO
+      when: "'No changes.' not in command.stdout"
+      debug:
+        msg: |-
+          Rebooting the machine... Please, unlock the device during the next boot!
+
+    - name: Reboot the machine for the changes to take effect
+      when: "'No changes.' not in command.stdout"
+      reboot:
+        pre_reboot_delay:   "{{ pre_reboot_delay }}"
+        reboot_timeout:     "{{ reboot_timeout }}"
+        post_reboot_delay:  "{{ post_reboot_delay }}"
+
+  # ---------------------------------------------------------------------------
+
+  roles:
+    #- tpm-config # TODO
+    - dnf-config
+    - layered-packages
+    - users-config
+    - subvolumes-config
+    - system-config
+    - system-tweaks
+    - flatpak-packages
+    - extract-user-files
+    - configure-apps
+
+  # ---------------------------------------------------------------------------
+
+  post_tasks:
+    - name: Mark the initial setup as DONE
+      lineinfile:
+        path:   /etc/.initial-setup
+        regexp: TODO
+        state:  present
+        line:   DONE
+
+    - name: Re-enable the suspend.target
+      systemd_service:
+        name:     suspend.target
+        enabled:  true
+        masked:   false
+        force:    true
+
+    - name: Re-enable automatic Gnome Software updates to prevent interruptions // root
+      shell:        gsettings get org.gnome.software allow-updates && gsettings set org.gnome.software allow-updates true
+      register:     gsettings
+      failed_when:  gsettings.rc != 0
+      changed_when: gsettings.stdout == 'false'
+
+    - name: Re-enable automatic Gnome Software updates to prevent interruptions // {{ username }}
+      shell:        gsettings get org.gnome.software allow-updates && dbus-run-session gsettings set org.gnome.software allow-updates true
+      register:     gsettings
+      failed_when:  gsettings.rc != 0
+      changed_when: gsettings.stdout == 'false'
+      become:       true
+      become_user:  "{{ (initial_setup|bool) | ternary('setup', username) }}"
+      environment:
+        DISPLAY:    '0:'
+
+    - name: Remove the auxiliary 'setup' user and its files
+      user:
+        name:     setup
+        state:    absent
+        remove:   true
+        force:    true
+
+    - name: FINAL INFO
+      debug:
+        msg: |-
+          The configuration of {{ host }} host has finished... Make sure to delete
+          the personal archives (via 'rm -f *.tar' command) in /mnt/btrfs after
+          manually checking that everything works correctly!
+

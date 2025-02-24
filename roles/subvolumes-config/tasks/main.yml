@@ -1,0 +1,134 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+# BTRFS subvolumes configuration.
+
+- name: Get the current mount points information
+  mount_facts:
+    sources:
+      - all
+    include_aggregate_mounts: false
+  register: mount
+
+- name: Set the 'mount_points' variable
+  set_fact:
+    luks_part:        "{{ mount.ansible_facts.mount_points['/'].device }}"
+    efi_part_UUID:    "{{ mount.ansible_facts.mount_points['/boot/efi'].uuid }}"
+    boot_part_UUID:   "{{ mount.ansible_facts.mount_points['/boot'].uuid }}"
+    btrfs_part_UUID:  "{{ mount.ansible_facts.mount_points['/'].uuid }}"
+
+# -----------------------------------------------------------------------------
+
+- name: Create the BTRFS mount point directory {{ btrfs_mount_point }}
+  file:
+    path:   "{{ btrfs_mount_point }}"
+    state:  directory
+    owner:  root
+    group:  root
+    mode:   0700
+
+- name: Mount the {{ btrfs_mount_point }}
+  ansible.posix.mount:
+    src:    "{{ luks_part }}"
+    path:   "{{ btrfs_mount_point }}"
+    state:  "{{ item }}"
+    fstype: btrfs
+  with_items:
+    - unmounted
+    - ephemeral
+
+- name: Set the correct ownership/permissions for the created subvolumes
+  file:
+    path:   "{{ btrfs_mount_point }}/{{ item }}"
+    state:  directory
+    owner:  "{{ username }}"
+    group:  "{{ username }}"
+    mode:   0755
+  loop:     "{{ btrfs_subvolumes | difference(btrfs_subvolumes_owner_only) }}"
+
+- name: Set the '0700' permissions for specified subvolumes
+  file:
+    path:   "{{ btrfs_mount_point }}/{{ item }}"
+    state:  directory
+    owner:  "{{ username }}"
+    group:  "{{ username }}"
+    mode:   0700
+  loop:     "{{ btrfs_subvolumes_owner_only }}"
+
+- name: Set the (no) copy-on-write attribute for specified volumes
+  file:
+    path:         "{{ btrfs_mount_point }}/{{ item }}"
+    state:        directory
+    recurse:      true
+    attributes:   '+C'
+  ignore_errors:  true
+  loop:           "{{ btrfs_subvolumes_nodatacow }}"
+
+- name: Create necessary (home) subfolders in the {{ username }} BTRFS subvolume
+  file:
+    state:  directory
+    path:   "{{ btrfs_mount_point }}/{{ username }}/{{ item.path }}"
+    mode:   "{{ item.mode }}"
+    owner:  "{{ username }}"
+    group:  "{{ username }}"
+  loop:     "{{ home_subfolders }}"
+  loop_control:
+    label:  "~/{{ username }}/{{ item.path }}"
+
+- name: Unmount the {{ btrfs_mount_point }} subvolume
+  ansible.posix.mount:
+    src:    "{{ luks_part }}"
+    path:   "{{ btrfs_mount_point }}"
+    state:  unmounted
+    fstype: btrfs
+
+# -----------------------------------------------------------------------------
+
+- name: Check if the previous backup of /etc/fstab already exists
+  stat:
+    path:           /etc/.fstab
+    follow:         false
+    get_mime:       false
+    get_checksum:   false
+    get_attributes: false
+  register: fstab_backup
+
+- name: Make a backup of original /etc/fstab file
+  when: not fstab_backup.stat.exists|bool
+  copy:
+    src:        /etc/fstab
+    dest:       /etc/.fstab
+    owner:      root
+    group:      root
+    mode:       '0644'
+    remote_src: true
+
+- name: Copy substitued fstab template to /etc folder
+  template:
+    src:        templates/fstab.j2
+    dest:       /etc/fstab
+    owner:      root
+    group:      root
+    mode:       '0644'
+  register: fstab
+
+- name: Run follow-up tasks after updating /etc/fstab file
+  when: fstab.changed|bool
+  block:
+    - name: Restore SELinux context for the /etc/fstab file
+      command: restorecon -F /etc/fstab
+
+    - name: Update systemd units generated from /etc/fstab
+      systemd_service:
+        daemon-reload: true
+
+    - name: REBOOT INFO
+      debug:
+        msg: |-
+          Rebooting the machine... Please, unlock the device during the next boot!
+
+    - name: Reboot the machine for the changes to take effect
+      reboot:
+        pre_reboot_delay:   "{{ pre_reboot_delay }}"
+        reboot_timeout:     "{{ reboot_timeout }}"
+        post_reboot_delay:  "{{ post_reboot_delay }}"

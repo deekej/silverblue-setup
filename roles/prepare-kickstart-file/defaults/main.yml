@@ -1,0 +1,27 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+# defaults file for prepare-kickstart-file
+
+kickstart_fedora_min_version: 40
+kickstart_fedora_arch: x86_64
+
+kickstart_subvolumes: []
+
+kickstart_system_language: en_US.UTF-8
+kickstart_keyboard_layout: en
+
+kickstart_time_zone: UTC
+kickstart_time_server: fedora.pool.ntp.org
+kickstart_time_nts: false
+
+kickstart_network_devices: []
+kickstart_network_hostname: fedora-silverblue-{{ kickstart_fedora_version }}
+
+kickstart_sshkeys: []
+
+kickstart_services_disabled:
+  - NetworkManager-wait-online
+
+kickstart_services_enabled:
+  - sshd

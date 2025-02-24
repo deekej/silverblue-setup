@@ -1,0 +1,7 @@
+[/]
+interface-open-file-manager=false
+keybinding-toggle-recording='<Primary><Shift><Alt>Break'
+recording-downsample=1
+recording-framerate=30
+recording-output-format='mp4'
+recording-start-delay=2

@@ -1,0 +1,139 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+
+# ---| Tweaks GIT repositories |-----------------------------------------------
+- name: Clone & copy all the repositories of Fedora Tweaks
+  when:
+    - tweaks_repos is defined
+    - tweaks_repos.root is defined or tweaks_repos.user is defined
+  block:
+    - name: Create a temporary directory /tmp/repos (in RAM)
+      file:
+        path:   /tmp/repos
+        state:  "{{ item }}"
+        owner:  root
+        group:  root
+      with_items:
+        - absent
+        - directory
+
+    - name: PROGRESS INFO
+      debug:
+        msg: |-
+          Cloning all Fedora Tweaks repositories from {{ username }}'s Github... This might take a long time!
+
+    - name: Clone all Fedora Tweaks repositories from {{ username }}'s Github into /tmp
+      git:
+        repo:               "{{ item.repo }}"
+        dest:               "/tmp/repos/{{ item.repo | basename }}"
+        force:              true
+        update:             true
+        recursive:          true
+        track_submodules:   true
+        accept_newhostkey:  true
+      loop:                 "{{ tweaks_repos.root + tweaks_repos.user }}"
+      loop_control:
+        label:              "/tmp/repos/{{ item.repo | basename }} "
+
+    - name: Make sure the /usr/local/bin binaries are not running
+      shell:        'killall -q {{ item }} || :'
+      loop:         "{{ usr_local_binaries }}"
+      register:     killall
+      changed_when: killall.rc == 0
+      when:
+        - usr_local_binaries is defined
+        - usr_local_binaries|length > 0
+
+    - name: Ensure the repository destination folders exist for {{ username }}
+      file:
+        path:   "{{ item.dest }}"
+        state:  directory
+        group:  "{{ username }}"
+        owner:  "{{ username }}"
+      loop:     "{{ tweaks_repos.user }}"
+      loop_control:
+        label:  "{{ item.dest }}"
+
+    - name: Copy the content of {{ item.repo }} repository into {{ item.dest }}
+      shell: cp -a /tmp/repos/{{ (item.repo | basename) ~ '/.' }} {{ item.dest ~ '/.' }}
+      loop:  "{{ tweaks_repos.root + tweaks_repos.user }}"
+      loop_control:
+        label: "{{ item.repo | basename }} -> {{ item.dest }}"
+
+    - name: Restore ownership of user repositories
+      shell:    find {{ item.dest }} -not -path '*.snapshots*' -exec chown --no-dereference {{ username }}:{{ username }} {} +
+      loop:     "{{ tweaks_repos.user }}"
+      loop_control:
+        label:  "{{ item.repo | basename }}"
+
+# ---| Files attributes |------------------------------------------------------
+- name: Set the specified ownership / permimissions for requested files
+  when: files_attributes is defined
+  block:
+    - name: Set the specified permissions for root's files
+      file:
+        path:   "{{ item.path }}"
+        mode:   "{{ item.mode }}"
+        owner:  root
+        group:  root
+      loop:     "{{ files_attributes.root }}"
+      loop_control:
+        label:  "{{ item.path }}:root:{{ item.mode}}"
+      when:
+        - files_attributes.root is defined
+        - files_attributes.root|length > 0
+
+    - name: Set the specified permissions for user's files
+      file:
+        path:   "{{ item.path }}"
+        mode:   "{{ item.mode }}"
+        owner:  "{{ username }}"
+        group:  "{{ username }}"
+      loop:     "{{ files_attributes.user }}"
+      loop_control:
+        label:  "{{ item.path }}:{{ username }}:{{ item.mode}}"
+      when:
+        - files_attributes.user is defined
+        - files_attributes.user|length > 0
+
+# ---| MIME / Fonts updates |--------------------------------------------------
+- name: Update the mimeinfo.cache for /usr/local/share/applications
+  command: update-mime-database /usr/local/share/applications
+
+- name: Update the mime desktop database with new launchers
+  command: update-desktop-database
+
+- name: Update the font configuration cache (system-wide)
+  command: fc-cache -f -v
+
+# ---| VIM Plugins installation |----------------------------------------------
+- name: Install VIM plugins via Vundle
+  when: vundle_plugins_install is defined
+  block:
+    - name: Download additional VIM plugins for root
+      shell: echo -e '\n' | vim +PluginInstall +qall
+      when:
+        - vundle_plugins_install.root is defined
+        - vundle_plugins_install.root|bool
+
+    - name: Download additional VIM plugins for {{ username }}
+      shell: echo -e '\n' | vim +PluginInstall +qall
+      become: true
+      become_user: "{{ username }}"
+      when:
+        - vundle_plugins_install.user is defined
+        - vundle_plugins_install.user|bool
+
+# ---| Final configuration |---------------------------------------------------
+- name: Ensure root's ownership of /var/home/{{ username }}/.snapshots
+  file:
+    path:   /var/home/{{ username }}/.snapshots
+    state:  directory
+    owner:  root
+    group:  root
+    mode:   0700
+
+- name: Make sure the SELinux context is properly set for /root folder
+  command: restorecon -RvF /root
+

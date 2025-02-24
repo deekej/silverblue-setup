@@ -1,0 +1,135 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+# Layered packages installation on top of base layer packages.
+
+- name: Create a complete list of packages to be installed
+  set_fact:
+    packages_list: "{{
+        (
+          (packages_default | difference(packages_default_mask))
+          + packages_extra_laptop
+          + packages_extra_user
+          + packages_extra_work
+          + packages_extra_theme
+          + packages_extra_codecs
+          + packages_extra_plugins
+          + packages_extra_utilities
+        ) | sort
+      }}"
+
+# -----------------------------------------------------------------------------
+
+# Make sure we can do a rollback later if things go sideways...
+- name: Pin the currently booted OSTree deployment
+  command:      ostree admin pin booted
+
+# NOTE: We need to run  'rpm-ostree cancel' before every command, because
+#       Silverblue might start the an upgrade or different process on its own
+#       at any given moment...
+
+- name: Run complete cleanup for rpm-ostree
+  shell:        rpm-ostree cancel && rpm-ostree cleanup --base --pending --repomd
+  timeout:      300
+
+- name: Force refresh the repositories metadata for rpm-ostree
+  shell:        rpm-ostree cancel && rpm-ostree refresh-md --force
+  timeout:      300
+
+- name: PROGRESS INFO
+  debug:
+    msg: |-
+      Starting the 'rpm-ostree upgrade' task... This might take a long time!
+
+# NOTE: To prevent installation failures we need to upgrade all the ostree layers.
+- name: Run the system upgrade
+  shell:        rpm-ostree cancel && rpm-ostree upgrade
+  register:     upgrade
+  changed_when: upgrade.stdout|regex_search('No upgrade available.', multiline=True) == ''
+  timeout:      900
+
+- name: PROGRESS INFO
+  debug:
+    msg: |-
+      Uninstalling the previously installed packages... This might take a long time!
+  when: packages_to_remove|length > 0
+
+- name: Uninstall all packages requested by the user
+  shell:        rpm-ostree cancel && rpm-ostree uninstall --allow-inactive --idempotent {{ packages_to_remove | join(' ') }}
+  when:         packages_to_remove|length > 0
+  register:     uninstall
+  changed_when: uninstall.stdout|regex_search('No change.', multiline=True) == ''
+  timeout:      900
+
+# -----------------------------------------------------------------------------
+
+- name: Check if there are any pending deployments
+  shell:        rpm-ostree status --pending-exit-77
+  register:     status
+  failed_when:  status.rc not in [0,77]
+  changed_when: false
+
+- name: REBOOT INFO
+  when:         status.rc == 77
+  debug:
+    msg: |-
+      Rebooting the machine... Please, unlock the device during the next boot!
+
+- name: Reboot the machine for the changes to take effect
+  when:         status.rc == 77
+  reboot:
+    pre_reboot_delay:   "{{ pre_reboot_delay }}"
+    reboot_timeout:     "{{ reboot_timeout }}"
+    post_reboot_delay:  "{{ post_reboot_delay }}"
+
+# -----------------------------------------------------------------------------
+
+- name: PROGRESS INFO
+  debug:
+    msg: |-
+      Installing the packages requested by the user... This might take a long time!
+
+# NOTE: We need to install all the packages requested by the user first,
+#       to prevent bricking the system in case some of the default packages
+#       get replaced by user's packages...
+- name: Install all packages requested by the user
+  shell:        rpm-ostree cancel && rpm-ostree install --allow-inactive --idempotent {{ packages_list | join(' ') }}
+  register:     install
+  changed_when: install.stdout|regex_search('No change.') == ""
+  timeout:      1800
+
+- name: PROGRESS INFO
+  debug:
+    msg: |-
+      Removing the base packages requested by the user... This might take a long time!
+  when: base_packages_to_remove|length > 0
+
+- name: Remove packages from OSTree base layer [might take a long time]
+  shell:        rpm-ostree cancel && rpm-ostree override remove {{ base_packages_to_remove | join(' ') }}
+  when:         base_packages_to_remove|length > 0
+  register:     removal
+  failed_when:  removal.stdout|regex_search('Override already exists', multiline=True) == ""
+  changed_when: removal.stdout|regex_search('Use "rpm-ostree override reset" to undo overrides', multiline=True) != ""
+  timeout:      1200
+
+# -----------------------------------------------------------------------------
+
+- name: Check if there are any pending deployments
+  shell:        rpm-ostree status --pending-exit-77
+  register:     status
+  failed_when:  status.rc not in [0,77]
+  changed_when: false
+
+- name: REBOOT INFO
+  when:         status.rc == 77
+  debug:
+    msg: |-
+      Rebooting the machine... Please, unlock the device during the next boot!
+
+- name: Reboot the machine for the changes to take effect
+  when:         status.rc == 77
+  reboot:
+    pre_reboot_delay:   "{{ pre_reboot_delay }}"
+    reboot_timeout:     "{{ reboot_timeout }}"
+    post_reboot_delay:  "{{ post_reboot_delay }}"
+

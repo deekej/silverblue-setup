@@ -1,0 +1,38 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+# Additional DNF repositories configuration
+
+- name: Copy overrides / additional repositories into /etc/yum.repos.d folder
+  copy:
+    src:    "files/{{ item }}"
+    dest:   "/etc/yum.repos.d/{{ item }}"
+    owner:  root
+    group:  root
+    mode:   0644
+  loop:     "{{ repos }}"
+
+- name: Copy the repos' GPG keys into /etc/pki/rpm-gpg folder
+  copy:
+    src:    "files/{{ item }}"
+    dest:   "/etc/pki/rpm-gpg/{{ item }}"
+    owner:  root
+    group:  root
+    mode:   0644
+  loop:     "{{ repos_gpg_keys }}"
+
+- name: Enable requested repositories
+  command:  sed -ri '0,/enabled=0/{s/enabled=0/enabled=1/}' "/etc/yum.repos.d/{{ item }}"
+  loop:     "{{ repos_to_enable }}"
+  when:     repos_to_enable|length > 0
+
+- name: Disable requested repositories
+  command:  sed -ri '0,/enabled=1/{s/enabled=1/enabled=0/}' "/etc/yum.repos.d/{{ item }}"
+  loop:     "{{ repos_to_disable }}"
+  when:     repos_to_disable|length > 0
+
+- name: Restore SELinux context for files in /etc/yum.repos.d/
+  command: restorecon -F -R /etc/yum.repos.d
+
+- name: Restore SELinux context for files in /etc/pki/rpm-gpg/
+  command: restorecon -F -R /etc/pki/rpm-gpg

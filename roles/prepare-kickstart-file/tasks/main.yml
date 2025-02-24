@@ -1,0 +1,44 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+# tasks file for prepare-kickstart-file
+
+- name: Check that the 'kickstart_disk_id' variable is set
+  fail:
+    msg: |-
+      'kickstart_disk_id' variable is not set! Check the host_vars file! Terminating...
+  when: (kickstart_disk_id is not defined) or (kickstart_disk_id|length == 0)
+
+- name: Fetch the latest Fedora version from fedoraproject.org website
+  when: kickstart_fedora_version is not defined
+  block:
+    - name: Fetch all the past releases from fedoraproject.org website
+      uri:
+        url:          https://fedoraproject.org/releases.json
+        force:        true
+        body_format:  json
+      register:       response
+
+    - name: Set the 'kickstart_fedora_version' variable to latest release
+      set_fact:
+        kickstart_fedora_version: "{{ response.json | map(attribute='version') | max | int }}"
+
+- name: Check if the 'kickstart_fedora_version' is set correctly
+  fail:
+    msg: The 'kickstart_fedora_version' is not a valid version number! Terminating...
+  when: >
+    (kickstart_fedora_version is not regex('^[0-9][0-9]$')) or
+    (kickstart_fedora_version|int < kickstart_fedora_min_version|int)
+
+- name: Populate the template and override the kickstart.cfg file
+  template:
+    src:  kickstart.j2
+    dest: kickstart.cfg
+  no_log: true
+
+- name: Validate the generated kickstart file with 'ksvalidator'
+  command:
+    cmd:        ksvalidator --version F{{ kickstart_fedora_version }} --firsterror kickstart.cfg
+  register:     ksvalidator
+  failed_when:  ksvalidator.rc != 0
+  changed_when: false

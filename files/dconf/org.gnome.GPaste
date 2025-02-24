@@ -1,0 +1,18 @@
+[/]
+element-size=uint64 48
+growing-lines=false
+images-support=true
+make-password='<Super>x'
+max-displayed-history-size=uint64 16
+max-memory-usage=uint64 512
+max-text-item-size=uint64 1048576
+min-text-item-size=uint64 1
+open-centered=false
+pop='<Super>Delete'
+save-history=false
+show-history='<Super>v'
+sync-clipboard-to-primary='<Super>c'
+sync-primary-to-clipboard='<Super>s'
+track-changes=true
+track-extension-state=true
+upload=''

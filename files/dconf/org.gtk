@@ -1,0 +1,18 @@
+[gtk4/settings/file-chooser]
+show-hidden=true
+sort-directories-first=true
+type-format='mime'
+
+[settings/file-chooser]
+date-format='regular'
+location-mode='path-bar'
+show-hidden=true
+show-size-column=true
+show-type-column=true
+sidebar-width=188
+sort-column='name'
+sort-directories-first=true
+sort-order='ascending'
+type-format='mime'
+window-position=(223, 48)
+window-size=(1475, 990)

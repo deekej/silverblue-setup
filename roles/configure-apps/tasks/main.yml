@@ -1,0 +1,118 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+# Restores previously saved configuration of regular and flatpak apps.
+# Regular apps configuration is restored via 'dconf'.
+# Flatpak apps are restored by replacing their configuration stored in
+# ~/.var/app/app-name/config folders
+
+- name: Create a 'dconf' temporary folder in tmp/
+  file:
+    path:       /tmp/dconf
+    state:      "{{ item }}"
+    owner:      "{{ username }}"
+    group:      "{{ username }}"
+    mode:       '0700'
+  with_items:
+    - absent
+    - directory
+
+- name: Copy the DCONF config files to /tmp/dconf folder
+  copy:
+    src:        "{{ 'files/dconf/' ~ schema }}"
+    dest:       "{{  '/tmp/dconf/' ~ schema }}"
+    owner:      "{{ username }}"
+    group:      "{{ username }}"
+    mode:       '0600'
+    force:      true
+  loop:         "{{ dconf_tracked_schemas }}"
+  loop_control:
+    loop_var:   schema
+
+- name: Load the backup of previously saved DCONF schemas
+  shell: cat {{ '/tmp/dconf/' ~ schema }} | dbus-run-session dconf load {{ '/' ~ (schema | regex_replace ('\.', '/')) ~ '/' }}
+  loop:         "{{ dconf_tracked_schemas }}"
+  loop_control:
+    loop_var:   schema
+  register:     dconf_load
+  failed_when:  dconf_load.rc != 0
+  become:       true
+  become_user:  "{{ username }}"
+  environment:
+    DISPLAY:    '0:'
+
+# -----------------------------------------------------------------------------
+
+- name: Create a complete list of tracked Flatpak Apps
+  set_fact:
+    flatpak_apps_list: "{{
+        (
+          (flatpak_packages_default | difference(flatpak_packages_default_mask))
+          + flatpak_packages_extra_user
+          + flatpak_packages_extra_work
+          + flatpak_packages_extra_theme
+          + flatpak_packages_extra_plugins
+          + flatpak_packages_extra_utilities
+          + flatpak_packages_extra_system
+        ) | sort
+      }}"
+
+- name: Create a 'flatpak-configs' temporary folder in tmp/
+  file:
+    path:       /tmp/flatpak-configs
+    state:      "{{ item }}"
+    owner:      "{{ username }}"
+    group:      "{{ username }}"
+    mode:       '0700'
+  with_items:
+    - absent
+    - directory
+
+- name: Copy and decrypt the Flatpak config archives to /tmp/flatpak-configs folder
+  copy:
+    src:        "{{ 'vault/flatpak-configs/' ~ config ~ '.tar.xz' }}"
+    dest:       "{{  '/tmp/flatpak-configs/' ~ config ~ '.tar.xz' }}"
+    owner:      "{{ username }}"
+    group:      "{{ username }}"
+    mode:       '0600'
+    force:      true
+    decrypt:    true
+  loop:         "{{ flatpak_apps_list }}"
+  loop_control:
+    loop_var:   config
+    label:      "{{ config ~ '.tar.xz' }}"
+
+- name: Ensure the destination folders for Flatpak configs exist
+  file:
+    path:       "{{ '/var/home/' ~ username ~ '/.var/app/' ~ app_name }}"
+    state:      directory
+    owner:      "{{ username }}"
+    group:      "{{ username }}"
+    mode:       '0755'
+  loop:         "{{ flatpak_apps_list }}"
+  loop_control:
+    loop_var:   app_name
+    label:      "{{ '~/.var/app/' ~ app_name }}"
+
+- name: Extract the Flatpak config archives to their locations
+  unarchive:
+    src:        "{{ '/tmp/flatpak-configs/' ~ config ~ '.tar.xz' }}"
+    dest:       "{{ '/var/home/' ~ username ~ '/.var/app/' ~ config }}"
+    owner:      "{{ username }}"
+    group:      "{{ username }}"
+    remote_src: true
+  loop:         "{{ flatpak_apps_list }}"
+  loop_control:
+    loop_var:   config
+    label:      "{{ config ~ '.tar.xz' }}"
+
+# -----------------------------------------------------------------------------
+
+- name: Delete the temporary folders
+  file:
+    path:       "{{ item }}"
+    state:      absent
+  with_items:
+    - /tmp/dconf
+    - /tmp/flatpak-configs
+

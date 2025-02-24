@@ -1,0 +1,182 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+
+- name: Backup GNOME settings of current user
+  hosts: controller
+  vars_files:
+    - roles/flatpak-packages/defaults/main.yml
+    - group_vars/all.yml
+
+  tasks:
+    - name: Make sure files/dconf/ folder exists
+      file:
+        path:   files/dconf
+        state:  directory
+        owner:  "{{ username }}"
+        group:  "{{ username }}"
+
+    - name: Dump the DCONF tracked schemas into separate config files
+      shell: dconf dump {{ '/' ~ (schema | regex_replace ('\.', '/')) ~ '/' }} > {{ 'files/dconf/' ~ schema  }}
+      loop: "{{ dconf_tracked_schemas }}"
+      loop_control:
+        loop_var: schema
+
+    - name: Create a complete list of tracked Flatpak Apps
+      set_fact:
+        flatpak_apps_list: "{{
+            (
+              (flatpak_packages_default | difference(flatpak_packages_default_mask))
+              + flatpak_packages_extra_user
+              + flatpak_packages_extra_work
+              + flatpak_packages_extra_theme
+              + flatpak_packages_extra_plugins
+              + flatpak_packages_extra_utilities
+              + flatpak_packages_extra_system
+            ) | sort
+          }}"
+
+    - name: Check the existence of specified Flatpak config folders
+      stat:
+        path:           "/var/home/{{ username }}/.var/app/{{ item }}/config"
+        get_mime:       false
+        get_checksum:   false
+        get_attributes: false
+      loop:             "{{ flatpak_apps_list }}"
+      loop_control:
+        label:          "~/.var/app/{{ item }}/config"
+      register:         flatpak_configs
+
+    - name: Cleanup the temporary folder
+      file:
+        path:           tmp/
+        state:          "{{ item }}"
+        owner:          "{{ username }}"
+        group:          "{{ username }}"
+        mode:           '0700'
+      with_items:
+        - absent
+        - directory
+
+    - name: Archive the specified Flatpak config folders
+      archive:
+        path:           "{{ config.stat.path }}"
+        dest:           "tmp/{{ config.item }}.tar.xz"
+        owner:          "{{ username }}"
+        group:          "{{ username }}"
+        format:         xz
+      loop:             "{{ flatpak_configs.results }}"
+      loop_control:
+        loop_var:       config
+        label:          "{{ config.item }}.tar.xz"
+      when:             config.stat.exists|bool
+
+    - name: Encrypt all the Flatpak config files with Ansible Vault
+      shell:            ansible-vault encrypt "tmp/{{ config.item }}.tar.xz"
+      loop:             "{{ flatpak_configs.results }}"
+      loop_control:
+        loop_var:       config
+        label:          "{{ config.item }}.tar.xz"
+      when:             config.stat.exists|bool
+
+    - name: Copy all encrypted Flatpak config files to vault/ subfolder
+      copy:
+        src:            "tmp/{{ config.item }}.tar.xz"
+        dest:           "vault/flatpak-configs/{{ config.item }}.tar.xz"
+        owner:          "{{ username }}"
+        group:          "{{ username }}"
+        mode:           '0600'
+        force:          true
+        decrypt:        false
+      loop:             "{{ flatpak_configs.results }}"
+      loop_control:
+        loop_var:       config
+        label:          "{{ config.item }}.tar.xz"
+      when:             config.stat.exists|bool
+
+    - name: Track all copied files with GIT LFS & stage them for commit
+      shell: git lfs track 'vault/flatpak-configs/*.tar.xz' && git add -f vault/flatpak-configs .gitattributes
+      register: git_result
+      failed_when: git_result.rc != 0
+      changed_when: git_result.rc == 0
+
+    - name: Delete the tmp/ folder
+      file:
+        path:   tmp/
+        state:  absent
+
+    # -------------------------------------------------------------------------
+
+    - name: Prepare a full backup of user's files for a transfer
+      become: true
+      block:
+        - name: Get the current mount points information
+          mount_facts:
+            sources:
+              - all
+            include_aggregate_mounts: false
+          register: mount
+
+        - name: Set the 'luks_part' variable
+          set_fact:
+            luks_part:      "{{ mount.ansible_facts.mount_points['/'].device }}"
+
+        - name: Make sure the BTRFS mount point folder /mnt/btrfs exists
+          file:
+            path:           /mnt/btrfs
+            state:          directory
+            owner:          root
+            group:          root
+            mode:           0700
+
+        - name: Mount the /mnt/btrfs folder
+          ansible.posix.mount:
+            src:            "{{ luks_part }}"
+            path:           /mnt/btrfs
+            state:          "{{ item }}"
+            fstype:         btrfs
+          with_items:
+            - unmounted
+            - ephemeral
+
+        - name: PROGRESS INFO
+          debug:
+            msg: |-
+              Creating TAR archives of personal BTRFS subvolumes... This might take a long time!
+
+        - name: Delete any previous leftover TAR archives
+          file:
+            path:           "/mnt/btrfs/{{ subvolume }}.tar"
+            state:          absent
+          loop:             "{{ btrfs_subvolumes | difference(btrfs_subvolumes_noarchive) | sort }}"
+          loop_control:
+            loop_var:       subvolume
+            label:          "/mnt/btrfs/{{ subvolume }}.tar"
+
+        # NOTE: We use the TAR command directly, because 'archive' module tends
+        #       to hang quite often for a no obvious reason...
+        - name: Create TAR archives for the personal BTRFS subvolumes
+          shell: tar -cvf {{ subvolume }}.tar --exclude-backups --exclude-caches-all --exclude='*.snapshots*' --exclude='*.config/dconf/user' --exclude='*.gnupg/public-keys.d/pubring.db.lock' {{ subvolume }}
+          args:
+            chdir:          /mnt/btrfs
+          loop:             "{{ btrfs_subvolumes | difference(btrfs_subvolumes_noarchive) | sort }}"
+          loop_control:
+            loop_var:       subvolume
+            label:          "/mnt/btrfs/{{ subvolume }}.tar"
+
+        - name: Set correct ownership of the created TAR archives
+          file:
+            path:           "/mnt/btrfs/{{ subvolume }}.tar"
+            owner:          "{{ username }}"
+            group:          "{{ username }}"
+            mode:           '0600'
+          loop:             "{{ btrfs_subvolumes | difference(btrfs_subvolumes_noarchive) | sort }}"
+          loop_control:
+            loop_var:       subvolume
+            label:          "/mnt/btrfs/{{ subvolume }}.tar"
+
+        - name: PROGRESS INFO
+          debug:
+            msg: |-
+              Subvolumes' archives have been created... Make sure to copy them to your external backup!
+

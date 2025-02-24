@@ -1,0 +1,23 @@
+[slack]
+name=Slack
+enabled=1
+skip_if_unavailable=1
+baseurl=https://packagecloud.io/slacktechnologies/slack/fedora/21/$basearch
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-slack
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300
+
+[slack-source]
+name=Slack - Source
+enabled=0
+skip_if_unavailable=1
+baseurl=https://packagecloud.io/slacktechnologies/slack/fedora/21/SRPMS
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-slack
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300

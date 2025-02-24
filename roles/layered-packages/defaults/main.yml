@@ -1,0 +1,58 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+
+packages_default:
+  - ansible
+  - ansible-core
+  - ansible-lint
+  - audacious
+  - brave-browser
+  - colordiff
+  - dconf-editor
+  - etckeeper
+  - git
+  - git-lfs
+  - glances
+  - gnome-extensions-app
+  - gnome-shell-extension-gpaste
+  - gnome-tweaks
+  - gpaste
+  - gpaste-ui
+  - guvcview
+  - htop
+  - pykickstart
+  - python-passlib
+  - rmlint
+  - seahorse
+  - smartmontools
+  - snapper
+  - speedtest-cli
+  - terminator
+  - tilix
+  - vlc
+  - vim
+  - vim-enhanced
+  - vim-X11
+  - xclip
+  - zenity
+  - zsh
+
+# In case someone doesn't want some of the default packages installed:
+packages_default_mask: []
+
+packages_extra_laptop: []
+
+# Additional packages that can be specified by the user:
+packages_extra_user: []
+packages_extra_work: []
+packages_extra_theme: []
+packages_extra_codecs: []
+packages_extra_plugins: []
+packages_extra_utilities: []
+
+# Packages to be force removed from the base layer (rpm-ostree override):
+base_packages_to_remove: []
+
+# Packages to be removed if previously installed by the user:
+packages_to_remove: []

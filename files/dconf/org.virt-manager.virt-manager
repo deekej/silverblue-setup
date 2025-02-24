@@ -1,0 +1,9 @@
+[/]
+system-tray=true
+
+[console]
+resize-guest=1
+
+[stats]
+enable-disk-poll=true
+enable-memory-poll=true

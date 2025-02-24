@@ -1,0 +1,6 @@
+## Make sure we keep necessary variables for SSH agent set when switching to
+## root user and back...
+Defaults    env_keep += "SSH_AUTH_SOCK SSH_AGENT_PID"
+
+## Allow 'wheel' group to use passwordless sudo
+%wheel	ALL=(ALL)	NOPASSWD: ALL

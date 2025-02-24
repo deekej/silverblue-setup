@@ -1,0 +1,81 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+# Extract previously backed up user's files. This roles expects that the user
+# has already copied all the subvolumes' archives to /mnt/btrfs on the host...
+
+- name: Get the current mount points information
+  mount_facts:
+    sources:
+      - all
+    include_aggregate_mounts: false
+  register: mount
+  when: luks_part is not defined or luks_part|length == 0
+
+- name: Set the 'luks_part' variable
+  set_fact:
+    luks_part: "{{ mount.ansible_facts.mount_points['/'].device }}"
+  when: luks_part is not defined or luks_part|length == 0
+
+- name: Make sure the BTRFS mount point folder /mnt/btrfs exists
+  file:
+    path:  /mnt/btrfs
+    state: directory
+    owner: root
+    group: root
+    mode:  0700
+
+- name: Mount the /mnt/btrfs folder
+  ansible.posix.mount:
+    src:            "{{ luks_part }}"
+    path:           /mnt/btrfs
+    state:          "{{ item }}"
+    fstype:         btrfs
+  with_items:
+    - unmounted
+    - ephemeral
+
+- name: Check the existence of the BTRFS subvolumes archives
+  stat:
+    path:           "/mnt/btrfs/{{ item }}.tar"
+    follow:         false
+    get_mime:       false
+    get_checksum:   false
+    get_attributes: false
+  loop:             "{{ btrfs_subvolumes | difference(btrfs_subvolumes_noarchive) | sort }}"
+  loop_control:
+    label:          "/mnt/btrfs/{{ item }}.tar"
+  register:         archives
+
+- name: Set correct permissions for the existing BTRFS subvolume archives
+  file:
+    path:           "/mnt/btrfs/{{ archive.item }}.tar"
+    owner:          "{{ username }}"
+    group:          "{{ username }}"
+    mode:           '0644'
+  loop:             "{{ archives.results }}"
+  loop_control:
+    loop_var:       archive
+    label:          "/mnt/btrfs/{{ archive.item }}.tar"
+  when:             archive.stat.exists|bool
+
+- name: PROGRESS INFO
+  debug:
+    msg: |-
+      Extracting archives of personal BTRFS subvolumes... This might take a long time!
+
+- name: Extract the archives of personal BTRFS subvolumes
+  unarchive:
+    src:            "/mnt/btrfs/{{ archive.item }}.tar"
+    dest:           "/mnt/btrfs"
+    decrypt:        false
+    keep_newer:     false
+    remote_src:     true
+    owner:          "{{ username }}"
+    group:          "{{ username }}"
+  loop:             "{{ archives.results }}"
+  loop_control:
+    loop_var:       archive
+    label:          "/mnt/btrfs/{{ archive.item }}.tar"
+  when:             archive.stat.exists|bool
+

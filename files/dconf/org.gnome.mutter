@@ -1,0 +1,6 @@
+[/]
+center-new-windows=true
+experimental-features=['scale-monitor-framebuffer', 'kms-modifiers', 'variable-refresh-rate', 'xwayland-native-scaling']
+
+[wayland/keybindings]
+restore-shortcuts=@as []

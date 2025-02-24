@@ -1,0 +1,27 @@
+---
+# defaults file for roles/dnf-repos-configuration
+
+repos:
+  - brave-browser.repo
+  - fedora-rar.repo
+  - fedora-steam.repo
+  - rpmfusion-free-updates-testing.repo
+  - rpmfusion-free-updates.repo
+  - rpmfusion-free.repo
+  - rpmfusion-nonfree-steam.repo
+  - rpmfusion-nonfree-updates-testing.repo
+  - rpmfusion-nonfree-updates.repo
+  - rpmfusion-nonfree.repo
+  - slack.repo
+  - vscode.repo
+  - copr-kdocker.repo
+
+repos_to_enable: []
+repos_to_disable: []
+
+repos_gpg_keys:
+  - RPM-GPG-KEY-brave
+  - RPM-GPG-KEY-microsoft
+  - RPM-GPG-KEY-slaanesh
+  - RPM-GPG-KEY-slack
+  - RPM-GPG-KEY-copr-kdocker

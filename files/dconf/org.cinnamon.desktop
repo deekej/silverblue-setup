@@ -1,0 +1,3 @@
+[applications/terminal]
+exec='terminator'
+exec-arg=''

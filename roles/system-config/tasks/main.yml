@@ -1,0 +1,344 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+
+- name: PROGRESS INFO
+  debug:
+    msg: |-
+      Enabling usage of fstrim on LUKS encrypted partition... This might take a long time!
+
+# https://jurf.github.io/2020/10/22/quick-tip-silverblue-trim/
+- name: Enable usage of fstrim on LUKS encrypted partition
+  shell:        rpm-ostree cancel && rpm-ostree kargs --append-if-missing=rd.luks.options=discard --unchanged-exit-77
+  register:     kargs_append
+  failed_when:  kargs_append.rc not in [0, 77]
+
+- name: REBOOT INFO
+  when:     kargs_append.rc != 77
+  debug:
+    msg: |-
+      Rebooting the machine... Please, unlock the device during the next boot!
+
+- name: Reboot the machine for the changes to take effect
+  when:     kargs_append.rc != 77
+  reboot:
+    pre_reboot_delay:   "{{ pre_reboot_delay }}"
+    reboot_timeout:     "{{ reboot_timeout }}"
+    post_reboot_delay:  "{{ post_reboot_delay }}"
+
+# -----------------------------------------------------------------------------
+
+- name: Check if GIT repository exists in /etc
+  stat:
+    path:       /etc/.git/
+  register:     git_status
+
+- name: Check if etckeeper has been initialized in /etc
+  stat:
+    path:       /etc/.etckeeper
+  register:     etckeeper_status
+
+- name: Set the variables for later use
+  set_fact:
+    etc_init:       "{{ not git_status.stat.exists }}"
+    etckeeper_init: "{{ not etckeeper_status.stat.exists }}"
+
+- name: Fully initialize the .git repository in /etc folder
+  when: etc_init|bool
+  block:
+    - name: Initialize .git repository in /etc folder
+      shell:        git init --initial-branch=main
+      args:
+        chdir:      /etc
+      register:     git_init
+      changed_when: "'Initialized empty Git repository' in git_init.stdout"
+
+    - name: Copy the .gitignore file into /etc
+      copy:
+        src:        files/etc/.gitignore
+        dest:       /etc/.gitignore
+        owner:      root
+        group:      root
+        mode:       0644
+        force:      true
+
+    - name: Set the git user.name for etckeeper in /etc
+      shell:        cat .git/config && git config user.name "{{ etckeeper_git_name }}"
+      args:
+        chdir:      /etc
+      register:     git_name
+      changed_when: 'etckeeper_git_name|string not in git_name.stdout'
+
+    - name: Set the git user.email for etckeeper in /etc
+      shell:        cat .git/config && git config user.email "{{ etckeeper_git_email }}"
+      args:
+        chdir:      /etc
+      register:     git_email
+      changed_when: 'etckeeper_git_email|string not in git_email.stdout'
+
+    - name: Create first commit with the .gitignore file
+      shell:        git add .gitignore && git commit -m ".gitignore for etckeeper added"
+      args:
+        chdir:      /etc
+      register:     git_ignore
+      failed_when:  git_ignore.rc not in [0,1]
+      changed_when:
+        - "'nothing to commit' not in git_ignore.stdout"
+        - "'no changes added to commit' not in git_ignore.stdout"
+
+- name: Copy the config file for 'etckeeper' to /etc folder
+  copy:
+    src:        files/etc/etckeeper/etckeeper.conf
+    dest:            /etc/etckeeper/etckeeper.conf
+    owner:      root
+    group:      root
+    mode:       0644
+
+- name: Initialize the 'etckeeper' in /etc and create first full commit
+  when:         etckeeper_init|bool
+  shell:        etckeeper init && etckeeper commit "Initial commit of /etc configuration"
+  register:     etckeeper_commit
+  failed_when:  etckeeper_commit.rc not in [0,1]
+  changed_when:
+    - "'nothing to commit' not in etckeeper_commit.stdout"
+    - "'no changes added to commit' not in etckeeper_commit.stdout"
+
+# -----------------------------------------------------------------------------
+
+- name: Enable passwordless sudo for the members of 'wheel' group
+  copy:
+    src:        files/etc/sudoers.d/admins
+    dest:            /etc/sudoers.d/admins
+    owner:      root
+    group:      root
+    mode:       0440
+  when:         passwordless_sudo|bool
+
+- name: Prohibit SSH login with password for the 'root' user
+  lineinfile:
+    path:       /etc/ssh/sshd_config
+    regexp:     '^#PermitRootLogin .*$'
+    line:       PermitRootLogin prohibit-password
+
+- name: Copy system-wide config file for Ansible
+  copy:
+    src:        files/etc/ansible/ansible.cfg
+    dest:            /etc/ansible/ansible.cfg
+    owner:      root
+    group:      root
+    mode:       0644
+
+# -----------------------------------------------------------------------------
+
+- name: Set the system locale to {{ locale_LANG }}
+  lineinfile:
+    path:       /etc/locale.conf
+    regexp:     '^LANG=.*$'
+    line:       'LANG="{{ locale_LANG }}"'
+
+- name: Set the LC_TIME locale to {{ locale_LC_TIME }}
+  lineinfile:
+    path:       /etc/locale.conf
+    regexp:     '^LC_TIME=.*$'
+    line:       'LC_TIME="{{ locale_LC_TIME }}"'
+  when:         locale_LC_TIME != 'None'
+
+# -----------------------------------------------------------------------------
+
+- name: Ensure that Slack / Brave do not override our RPM repositories
+  copy:
+    src:      "files/{{ item }}"
+    dest:     "{{ item }}"
+    owner:    root
+    group:    root
+    mode:     0644
+  with_items:
+    - /etc/default/brave-browser
+    - /etc/default/slack
+
+# -----------------------------------------------------------------------------
+
+- name: Make the colored output of diff more readable
+  copy:
+    src:      files/etc/colordiffrc
+    dest:          /etc/colordiffrc
+    owner:    root
+    group:    root
+    mode:     0644
+  when:       colordiff_lighter|bool
+
+# -----------------------------------------------------------------------------
+
+- name: "Initialize Snapper for {{ username }}'s /home directory"
+  command:      snapper -c '{{ username }}' create-config '/var/home/{{ username }}'
+  register:     snapper_init
+  changed_when:
+    - snapper_init.rc == 0
+    - snapper_init.stdout == ""
+  failed_when:
+    - snapper_init.rc != 0
+    - "'subvolume already covered' not in snapper_init.stderr"
+
+- name: Copy custom Snapper configuration for the /home directory into /etc
+  template:
+    src:    templates/snapper-home.j2
+    dest:   /etc/snapper/configs/{{username}}
+    owner:  root
+    group:  root
+    mode:   0640
+
+- name: Enable and start the timer units for the Snapper
+  systemd_service:
+    name:     "{{ item }}"
+    state:    started
+    enabled:  yes
+  with_items:
+    - snapper-timeline.timer
+    - snapper-cleanup.timer
+
+# -----------------------------------------------------------------------------
+
+#- name: Copy custom service to fix Keychron Keyboard keys
+#  copy:
+#    src:        files/etc/systemd/system/keychron-keyboard-fix.service
+#    dest:            /etc/systemd/system/keychron-keyboard-fix.service
+#    owner:      root
+#    group:      root
+#    mode:       0644
+#
+#- name: Enable the keychron-keyboad-fix.service
+#  systemd_service:
+#    name:           keychron-keyboard-fix.service
+#    state:          started
+#    enabled:        yes
+#    daemon_reload:  yes
+
+- name: Copy 'Automatic WiFi On/Off Tweak' into /etc [laptop]
+  copy:
+    src:        files/etc/NetworkManager/dispatcher.d/70-wifi-wired-exclusive.sh
+    dest:            /etc/NetworkManager/dispatcher.d/70-wifi-wired-exclusive.sh
+    owner:      root
+    group:      root
+    mode:       0755
+  when:         laptop_config|bool
+
+# -----------------------------------------------------------------------------
+
+# TODO: Configure the section below according the workstation-setup from work.
+#       Add folder for policies for BRAVE.
+
+- name: Run the configuration for the Red Hat's work profile [Red Hat]
+  when: redhat_work_config|bool
+  block:
+    - name: Make sure all the necessary folders exist in /etc [Red Hat]
+      file:
+        path:       "{{ item }}"
+        state:      directory
+        owner:      root
+        group:      root
+        mode:       0755
+      with_items:
+        - /etc/brave/policies/managed/
+        - /etc/krb5.conf.d
+        - /etc/openldap
+        - /etc/openldap/certs
+        - /etc/pki/ca-trust/source/anchors
+        - /etc/pki/tls/certs
+
+    - name: Copy all the Red Hat certificates to /etc [Red Hat]
+      copy:
+        src:      "files/{{ item }}"
+        dest:     "{{ item }}"
+        mode:     0644
+        owner:    root
+        group:    root
+      with_items:
+          - /etc/pki/ca-trust/source/anchors/Current-IT-Root-CAs.pem
+          - /etc/pki/ca-trust/source/anchors/Eng-CA.crt
+          - /etc/pki/ca-trust/source/anchors/RH_ITW.crt
+          - /etc/pki/ca-trust/source/anchors/oracle_ebs.crt
+          - /etc/pki/ca-trust/source/anchors/win-intermediate-ca.cer
+
+    - name: Create additional certificate symlinks in /etc [Red Hat]
+      file:
+        src:        "{{ symlink.src }}"
+        dest:       "{{ symlink.dest }}"
+        state:      link
+        owner:      root
+        group:      root
+        force:      yes
+      loop_control:
+        loop_var:   symlink
+        label:      "{{ symlink.src }} -> {{ symlink.dest }}"
+      with_items:
+        - src:  /etc/pki/ca-trust/source/anchors/Current-IT-Root-CAs.pem
+          dest: /etc/pki/tls/certs/Current-IT-Root-CAs.pem
+
+        - src:  /etc/pki/ca-trust/source/anchors/Eng-CA.crt
+          dest: /etc/pki/tls/certs/Eng-CA.crt
+
+        - src:  /etc/pki/ca-trust/source/anchors/RH_ITW.crt
+          dest: /etc/pki/tls/certs/RH_ITW.crt
+
+        - src:  /etc/pki/ca-trust/source/anchors/oracle_ebs.crt
+          dest: /etc/pki/tls/certs/oracle_ebs.crt
+
+        - src:  /etc/pki/ca-trust/source/anchors/win-intermediate-ca.cer
+          dest: /etc/pki/tls/certs/win-intermediate-ca.cer
+
+        - src:  /etc/pki/ca-trust/source/anchors/Current-IT-Root-CAs.pem
+          dest: /etc/openldap/certs/Current-IT-Root-CAs.pem
+
+    - name: Update the consolidated & dynamic configuration of CA certificates [Red Hat]
+      command:    update-ca-trust
+
+    # -------------------------------------------------------------------------
+
+    - name: Copy all the configuration files into /etc [Red Hat]
+      copy:
+        src:      "files/{{ item }}"
+        dest:     "{{ item }}"
+        mode:     0644
+        owner:    root
+        group:    root
+        backup:   yes
+      with_items:
+        - /etc/krb5.conf
+        - /etc/krb5.conf.d/enable_sssd_conf_dir
+        - /etc/krb5.conf.d/fedoraproject_org
+        - /etc/krb5.conf.d/redhat_com
+        - /etc/openldap/ldap.conf
+
+    # -------------------------------------------------------------------------
+
+    - name: Copy VPN profiles into /etc [Red Hat]
+      copy:
+        src:      "files/{{ item }}"
+        dest:     "{{ item }}"
+        owner:    root
+        group:    root
+        mode:     0600
+      with_items:
+        - "/etc/NetworkManager/system-connections/Red Hat | Amsterdam VPN.nmconnection"
+        - "/etc/NetworkManager/system-connections/Red Hat | Brno VPN.nmconnection"
+        - "/etc/NetworkManager/system-connections/Red Hat | Global VPN.nmconnection"
+        - "/etc/NetworkManager/system-connections/Red Hat | Raleigh VPN.nmconnection"
+
+    - name: Load the new VPN profiles with NetworkManager [Red Hat]
+      command: nmcli connection reload
+
+    # ---| end of redhat_work_config block |-----------------------------------
+
+- name: Restore the SELinux context recursively for whole /etc folder
+  command: restorecon -RvF /etc
+
+# -----------------------------------------------------------------------------
+
+- name: Create initial commit of configuration in /etc with etckeeper
+  when:         etckeeper_init|bool
+  shell:        etckeeper commit "Custom configuration added by Ansible"
+  register:     etckeeper_commit
+  failed_when:  etckeeper_commit.rc not in [0,1]
+  changed_when:
+    - "'nothing to commit' not in etckeeper_commit.stdout"
+    - "'no changes added to commit' not in etckeeper_commit.stdout"

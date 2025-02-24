@@ -1,0 +1,15 @@
+set savedefault=true
+set timeout="{{ grub_timeout }}"
+set timeout_style=menu
+set terminal=gfxterm
+set terminal_output=“gfxterm”
+set gfxpayload=keep
+set gfxmode="{{ grub_gfx_mode }}"
+set lang=en_US
+
+load_video
+insmod gettext
+insmod gfxterm
+insmod gfxmenu
+terminal_input gfxterm
+terminal_output gfxterm

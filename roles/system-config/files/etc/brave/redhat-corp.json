@@ -1,0 +1,5 @@
+{
+  "AuthServerAllowlist": "*.fedoraproject.org,*.redhat.com,*.ipa.redhat.com",
+  "AuthNegotiateDelegateAllowlist": "*fedoraproject.org,*.redhat.com,*.ipa.redhat.com",
+  "DisableAuthNegotiateCnameLookup": true
+}

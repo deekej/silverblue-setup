@@ -1,0 +1,51 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+
+- name: Generate the kickstart file for next Fedora Silverblue installation
+  hosts: localhost
+
+  pre_tasks:
+    - name: Check if the 'kickstart_host' variable is set
+      fail:
+        msg: |-
+          'kickstart_host' is not specified! Terminating...
+      when: (kickstart_host is not defined) or (kickstart_host|length == 0)
+
+    - name: Include the correct host variables
+      include_vars: "host_vars/{{ kickstart_host }}.yml"
+
+  roles:
+    - prepare-kickstart-file
+
+  post_tasks:
+    - name: Check that we are not leaking any passwords
+      lineinfile:
+        path: kickstart.cfg
+        state: absent
+        search_string: "{{ password }}"
+      register: password_check
+      no_log: true
+      check_mode: true
+      changed_when: false
+      failed_when: password_check.found|bool
+      loop_control:
+        loop_var: password
+        label: "[REDACTED]"
+      with_items:
+        - "{{ user_password_plain }}"
+        - "{{ root_password_plain }}"
+
+    - name: Commit the updated kickstart.cfg file
+      shell:
+        cmd: "git add kickstart.cfg && git commit -m 'Kickstart file updated for Fedora installation on {{ kickstart_host }} host'"
+      register: git_result
+      failed_when: git_result.rc != 0
+      changed_when: git_result.rc == 0
+
+    - name: Push the updated kickstart.cfg file
+      command:
+        cmd: git push
+      register: git_result
+      failed_when: git_result.rc != 0
+      changed_when: git_result.rc == 0

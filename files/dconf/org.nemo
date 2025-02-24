@@ -1,0 +1,44 @@
+[desktop]
+show-desktop-icons=false
+
+[icon-view]
+captions=['none', 'size', 'type']
+
+[plugins]
+disabled-actions=['add-desklets.nemo_action', 'set-as-background.nemo_action', 'change-background.nemo_action', 'new-launcher.nemo_action']
+
+[plugins/seahorse]
+armor-mode=true
+
+[preferences]
+close-device-view-on-device-eject=true
+date-format='informal'
+enable-delete=false
+executable-text-activation='display'
+show-advanced-permissions=true
+show-compact-view-icon-toolbar=false
+show-full-path-titles=true
+show-hidden-files=true
+show-location-entry=true
+show-new-folder-icon-toolbar=true
+show-open-in-terminal-toolbar=true
+show-show-thumbnails-toolbar=true
+start-with-dual-pane=false
+thumbnail-limit=uint64 10737418240
+
+[preferences/menu-config]
+background-menu-scripts=false
+desktop-menu-customize=false
+selection-menu-copy-to=true
+selection-menu-duplicate=true
+selection-menu-make-link=true
+selection-menu-scripts=false
+
+[search]
+search-sort-column='name'
+
+[window-state]
+geometry='1446x829+24+21'
+maximized=true
+sidebar-bookmark-breakpoint=5
+start-with-sidebar=true

@@ -1,0 +1,12 @@
+[mouse]
+accel-profile='flat'
+speed=-0.25
+
+[pointingstick]
+accel-profile='flat'
+
+[touchpad]
+accel-profile='flat'
+
+[trackball]
+accel-profile='flat'

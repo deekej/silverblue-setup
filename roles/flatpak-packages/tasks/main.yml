@@ -1,0 +1,193 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+# Flatpak packages installation & configuration.
+
+- name: Remove unwanted packages by the user
+  flatpak:
+    name:   "{{ item }}"
+    state:  absent
+  loop:     "{{ flatpak_packages_to_remove }}"
+
+- name: Remove unused system-wide Flatpak packages
+  command:      flatpak uninstall --unused --assumeyes --system
+  register:     flatpak_remove_system
+  changed_when: flatpak_remove_system.stdout|regex_search('Nothing unused to uninstall') == ""
+
+- name: Remove unused user-installed Flatpak packages
+  command:      flatpak uninstall --unused --assumeyes --user
+  register:     flatpak_remove_user
+  changed_when: flatpak_remove_user.stdout|regex_search('Nothing unused to uninstall') == ""
+
+# -----------------------------------------------------------------------------
+
+# See: https://fedoraproject.org/wiki/Changes/Filtered_Flathub_Applications
+- name: Remove 'flathub' Flatpak remote to disable Fedora's native filtering
+  flatpak_remote:
+    name:             flathub
+    state:            absent
+    flatpakrepo_url:  https://flathub.org/repo/flathub.flatpakrepo
+  when: flatpak_remote_enable_flathub|bool
+
+- name: Enable 'fedora' Flatpak remote
+  flatpak_remote:
+    name:             fedora
+    state:            present
+    flatpakrepo_url:  oci+https://registry.fedoraproject.org
+  when: flatpak_remote_enable_fedora|bool
+
+# Readding the Flathub remote removes the filtering:
+- name: Enable 'flathub' Flatpak remote
+  flatpak_remote:
+    name:             flathub
+    state:            present
+    flatpakrepo_url:  https://flathub.org/repo/flathub.flatpakrepo
+  when: flatpak_remote_enable_flathub|bool
+
+- name: Enable Flatpak remote - kdeapps
+  flatpak_remote:
+    name:             kdeapps
+    state:            present
+    flatpakrepo_url:  https://distribute.kde.org/kdeapps.flatpakrepo
+  when: flatpak_remote_enable_kdeapps|bool
+
+- name: Enable Flatpak remote - flathub-beta
+  flatpak_remote:
+    name:             flathub-beta
+    state:            present
+    flatpakrepo_url:  https://flathub.org/beta-repo/flathub-beta.flatpakrepo
+  when: flatpak_remote_enable_flathub_beta|bool
+
+- name: Enable Flatpak remote - gnome-nightly
+  flatpak_remote:
+    name:             gnome-nightly
+    state:            present
+    flatpakrepo_url:  https://nightly.gnome.org/gnome-nightly.flatpakrepo
+  when: flatpak_remote_enable_gnome_nightly|bool
+
+- name: Enable Flatpak remote - eclipse-nightly
+  flatpak_remote:
+    name:             eclipse-nightly
+    state:            present
+    flatpakrepo_url:  http://eclipse.matbooth.co.uk/flatpak/nightly/eclipse.flatpakrepo
+  when: flatpak_remote_enable_eclipse_nightly|bool
+
+# -----------------------------------------------------------------------------
+
+- name: Create a complete list of Flatpak packages to be installed
+  set_fact:
+    flatpak_packages_list: "{{
+        (
+          (flatpak_packages_default | difference(flatpak_packages_default_mask))
+          + flatpak_packages_extra_user
+          + flatpak_packages_extra_work
+          + flatpak_packages_extra_theme
+          + flatpak_packages_extra_codecs
+          + flatpak_packages_extra_plugins
+          + flatpak_packages_extra_runtimes
+          + flatpak_packages_extra_utilities
+        ) | sort
+      }}"
+
+- name: PROGRESS INFO
+  debug:
+    msg: |-
+      Installing all the Flatpak packages requested by the user... This might take a long time!
+
+- name: Install additional packages requested by user (system-wide)
+  flatpak:
+    name:   "{{ flatpak_packages_list }}"
+    state:  present
+
+- name: Install additional packages requested by user (system-wide) [fedora]
+  flatpak:
+    name:   "{{ flatpak_packages_extra_fedora + flatpak_packages_fedora_default }}"
+    state:  present
+    remote: fedora
+
+- name: Update all installed Flatpak packages
+  shell: flatpak update --noninteractive --assumeyes
+  register: flatpak_update
+  changed_when: "'Nothing to do.' not in flatpak_update.stdout"
+
+# -----------------------------------------------------------------------------
+
+# NOTE: The DRI_PRIME=1 makes sure we use dedicated GPU by default - if any is available.
+- name: Set DRI_PRIME=1 environment variable for all Flatpak packages
+  shell:        flatpak override --show && flatpak override --env=DRI_PRIME=1
+  register:     flatpak_override
+  changed_when: flatpak_override.stdout | regex_search('DRI_PRIME=1') == none
+
+- name: Fix displaying of custom themes in Flatpak apps
+  shell:        flatpak override --show && flatpak override --filesystem=xdg-data/themes
+  register:     flatpak_override
+  changed_when: flatpak_override.stdout | regex_search('filesystems=xdg-data/themes') == none
+
+- name: Enable access of Flatpak apps to custom ~/.icons
+  when:         flatpak_custom_icons|bool
+  shell:        flatpak override --show && flatpak override --filesystem='~/.icons:ro'
+  register:     flatpak_override
+  changed_when: flatpak_override.stdout | regex_search('~/\.icons') == none
+
+- name: Enable access of Flatpak apps to custom ~/.themes
+  when:         flatpak_custom_gtk_themes|bool
+  shell:        flatpak override --show && flatpak override --filesystem='~/.themes:ro'
+  register:     flatpak_override
+  changed_when: flatpak_override.stdout | regex_search('~/\.themes') == none
+
+- name: Enable custom icons for Flatpak apps
+  when:
+    - flatpak_custom_icons_theme is defined
+    - flatpak_custom_icons_theme|length > 0
+  shell:        flatpak override --show && flatpak override --env=ICON_THEME={{ flatpak_custom_icons_theme }}
+  register:     flatpak_override
+  changed_when: flatpak_override.stdout | regex_search('ICON_THEME=') == none
+
+- name: Enable custom themes for Flatpak apps
+  when:
+    - flatpak_custom_gtk_theme is defined
+    - flatpak_custom_gtk_theme|length > 0
+  shell:        flatpak override --show && flatpak override --env=GTK_THEME={{ flatpak_custom_gtk_theme }}
+  register:     flatpak_override
+  changed_when: flatpak_override.stdout | regex_search('GTK_THEME=') == none
+
+# -----------------------------------------------------------------------------
+
+- name: Fix displaying of tray icon for Audacious Music Player
+  when:         "'org.atheme.audacious' in flatpak_packages_list"
+  shell:        flatpak override --show org.atheme.audacious && flatpak override --env=QT_QPA_PLATFORM=xcb org.atheme.audacious
+  register:     flatpak_override
+  changed_when: flatpak_override.stdout | regex_search('QT_QPA_PLATFORM=xcb') == none
+
+- name: Fix displaying of tray icon for qBittorrent
+  when:         "'org.qbittorrent.qBittorrent' in flatpak_packages_list"
+  shell:        flatpak override --show org.qbittorrent.qBittorrent && flatpak override --nosocket=wayland --env=QT_QPA_PLATFORM=xcb org.qbittorrent.qBittorrent
+  register:     flatpak_override
+  changed_when:
+    - flatpak_override.stdout | regex_search('sockets=!wayland') == none
+    - flatpak_override.stdout | regex_search('QT_QPA_PLATFORM=xcb') == none
+
+- name: Fix playback issues for Firefox Browser in Wayland
+  when:         "'org.mozilla.firefox' in flatpak_packages_list"
+  shell:        flatpak override --show org.mozilla.firefox && flatpak override --socket=wayland --env=MOZ_ENABLE_WAYLAND=1 org.mozilla.firefox
+  register:     flatpak_override
+  changed_when:
+    - flatpak_override.stdout | regex_search('sockets=wayland') == none
+    - flatpak_override.stdout | regex_search('MOZ_ENABLE_WAYLAND=1') == none
+
+- name: Fix playback issues for VLC Player in Wayland
+  when:         "'org.videolan.VLC' in flatpak_packages_list"
+  shell:        flatpak override --show org.videolan.VLC && flatpak override --socket=wayland --env=QT_QPA_PLATFORM=xcb org.videolan.VLC
+  register:     flatpak_override
+  changed_when:
+    - flatpak_override.stdout | regex_search('sockets=wayland') == none
+    - flatpak_override.stdout | regex_search('QT_QPA_PLATFORM=xcb') == none
+
+# -----------------------------------------------------------------------------
+
+- name: Allow Spotify to access ~/.cache/spotify folder
+  when:         "'com.spotify.Client' in flatpak_packages_list"
+  shell:        flatpak override --show && flatpak override --filesystem='~/.cache/spotify' com.spotify.Client
+  register:     flatpak_override
+  changed_when: flatpak_override.stdout | regex_search('~/\.cache/spotify') == none
+

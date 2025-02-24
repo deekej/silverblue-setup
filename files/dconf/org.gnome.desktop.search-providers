@@ -1,0 +1,4 @@
+[/]
+disabled=['org.gnome.Boxes.desktop', 'org.gnome.Characters.desktop', 'org.gnome.Photos.desktop', 'seahorse.desktop', 'org.gnome.Software.desktop', 'org.gnome.Terminal.desktop']
+enabled=['org.gnome.Weather.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.clocks.desktop']
+sort-order=['org.gnome.Settings.desktop', 'org.gnome.Documents.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'firefox.desktop', 'org.gnome.Weather.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.Calendar.desktop', 'org.gnome.clocks.desktop', 'org.gnome.seahorse.Application.desktop', 'org.gnome.Boxes.desktop', 'org.gnome.GPaste.Ui.desktop', 'org.gnome.Photos.desktop', 'org.gnome.Contacts.desktop', 'org.gnome.Software.desktop', 'org.gnome.Characters.desktop']

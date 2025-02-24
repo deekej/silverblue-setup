@@ -1,0 +1,66 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+# Users configuration.
+
+- name: Generate salted password hash for '{ username }}'
+  shell:    echo "{{ user_password_plain }}" | mkpasswd --method=yescrypt --stdin
+  register: mkpasswd_user
+  no_log:   true
+
+- name: Generate salted password hash for 'root'
+  shell:    echo "{{ root_password_plain }}" | mkpasswd --method=yescrypt --stdin
+  register: mkpasswd_root
+  no_log:   true
+
+- name: Store the salted password hashes into variables
+  set_fact:
+    user_password_hash: "{{ mkpasswd_user.stdout }}"
+    root_password_hash: "{{ mkpasswd_root.stdout }}"
+  no_log: true
+
+# -----------------------------------------------------------------------------
+
+- name: Create a primary group for {{ username }} [{{ group_id }}]
+  group:
+    gid:    "{{ group_id }}"
+    name:   "{{ username }}"
+    state:  present
+
+- name: Create a new user [{{ username }}] with user ID == {{ user_id }}
+  user:
+    comment:  "{{ displayed_name }}"
+    name:     "{{ username }}"
+    uid:      "{{ user_id }}"
+    group:    "{{ username }}"
+    groups:   "{{ groups_membership }}"
+    password: "{{ user_password_hash }}"
+    shell:    "{{ user_login_shell }}"
+    append:   true
+  no_log:     true
+
+# -----------------------------------------------------------------------------
+
+- name: Update the 'root' user password
+  user:
+    comment:        root
+    name:           root
+    uid:            0
+    group:          0
+    password:       "{{ root_password_hash }}"
+    password_lock:  "{{ root_password_lock }}"
+    shell:          "{{ (initial_setup|bool) | ternary('/bin/bash', root_login_shell) }}"
+  no_log:           true
+
+# -----------------------------------------------------------------------------
+
+# This one is needed to be able to run Toolboxes on Silverblue:
+- name: Create additional subuid and subgid to run rootless containers
+  command:
+    argv:
+      - usermod
+      - --add-subuids
+      - "{{ subuid_start }}-{{ subuid_start + subuid_range }}"
+      - --add-subgids
+      - "{{ subgid_start }}-{{ subgid_start + subgid_range }}"
+      - "{{ username }}"

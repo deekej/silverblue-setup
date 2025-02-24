@@ -1,0 +1,77 @@
+[plugins/color]
+night-light-enabled=true
+night-light-last-coordinates=(49.472099999999998, 17.052099999999999)
+
+[plugins/housekeeping]
+free-percent-notify=0.25
+free-percent-notify-again=0.125
+free-size-gb-no-notify=64
+min-notify-period=5
+
+[plugins/media-keys]
+custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom10/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom11/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom13/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom25/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom9/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/']
+help=@as []
+logout=@as []
+magnifier=@as []
+magnifier-zoom-in=@as []
+magnifier-zoom-out=@as []
+screenreader=['']
+
+[plugins/media-keys/custom-keybindings/custom0]
+binding='<Control><Alt>t'
+command='terminator --maximize  --layout 1440p.35'
+name='Terminator'
+
+[plugins/media-keys/custom-keybindings/custom1]
+binding='<Primary><Alt>Delete'
+command='gnome-system-monitor'
+name='System Monitor'
+
+[plugins/media-keys/custom-keybindings/custom10]
+binding='F1'
+command='quake-terminal'
+name='Quake Terminal'
+
+[plugins/media-keys/custom-keybindings/custom11]
+binding='<Primary><Alt>g'
+command='gvim'
+name='gVim'
+
+[plugins/media-keys/custom-keybindings/custom13]
+binding='<Control><Alt>e'
+command='gtk-launch nemo.desktop'
+name='Files'
+
+[plugins/media-keys/custom-keybindings/custom25]
+binding='<Primary><Alt>k'
+command='pass -c redhat/kerberos'
+name='Copy Kerberos password into clipboard'
+
+[plugins/media-keys/custom-keybindings/custom3]
+binding='<Control><Alt>Insert'
+command='timeular'
+name='Timeular'
+
+[plugins/media-keys/custom-keybindings/custom5]
+binding='<Alt>F3'
+command='vpnup'
+name='Turn on VPN'
+
+[plugins/media-keys/custom-keybindings/custom6]
+binding='<Super>e'
+command='gtk-launch nemo.desktop'
+name='Files'
+
+[plugins/media-keys/custom-keybindings/custom9]
+binding='<Shift><Control><Alt>F12'
+command='toggle-dark-mode'
+name='Toggle Dark Mode'
+
+[plugins/power]
+idle-brightness=15
+sleep-inactive-ac-timeout=3600
+sleep-inactive-ac-type='nothing'
+sleep-inactive-battery-timeout=600
+
+[plugins/wwan]
+unlock-sim=true
