@@ -303,6 +303,7 @@
         group:    root
         backup:   yes
       with_items:
+        - /etc/brave/policies/managed/redhat-corp.json
         - /etc/krb5.conf
         - /etc/krb5.conf.d/enable_sssd_conf_dir
         - /etc/krb5.conf.d/fedoraproject_org
