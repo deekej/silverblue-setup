@@ -10,6 +10,9 @@ all:
     Normandy-SR3:
       ansible_host:           192.168.42.32
 
+    Normandy-SR2:
+      ansible_host:           192.168.42.33
+
     Normandy-SRX:
       ansible_host:           192.168.42.34
 
