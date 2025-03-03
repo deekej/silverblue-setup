@@ -9,10 +9,10 @@ user_id:        1001
 group_id:       1001
 
 subuid_start: 100000
-subuid_range: 32768
+subuid_range: 65535
 
 subgid_start: 100000
-subgid_range: 32768
+subgid_range: 65535
 
 groups_membership:
   - "{{ username }}"
