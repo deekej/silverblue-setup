@@ -243,6 +243,7 @@
         - /etc/openldap
         - /etc/openldap/certs
         - /etc/pki/ca-trust/source/anchors
+        - /etc/pki/ipa/
         - /etc/pki/tls/certs
 
     - name: Copy all the Red Hat certificates to /etc [Red Hat]
@@ -258,6 +259,7 @@
           - /etc/pki/ca-trust/source/anchors/RH_ITW.crt
           - /etc/pki/ca-trust/source/anchors/oracle_ebs.crt
           - /etc/pki/ca-trust/source/anchors/win-intermediate-ca.cer
+          - /etc/pki/ipa/fedoraproject_ipa_ca.crt
 
     - name: Create additional certificate symlinks in /etc [Red Hat]
       file:
