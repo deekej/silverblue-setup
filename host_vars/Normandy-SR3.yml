@@ -13,32 +13,18 @@ kickstart_network_devices:
 kickstart_disk_id: ata-WDC_WDS500G1R0A-68A4W0_23464V801616
 
 # ---| Partitions Configuration |----------------------------------------------
-NTFS_mounts:  true
+NTFS_mounts:  false
 
-NTFS_mount_points:
-  - device:       /dev/sda1
-    mount_point:  /mnt/Downloads
-
-  - device:       /dev/sdb2
-    mount_point:  /mnt/Storage
-
-  - device:       /dev/sdc1
-    mount_point:  /mnt/Scratch
-
-# ---| Flatpak packages configuration |----------------------------------------
-# NOTE: In case of failure of flatpak packages installation, you might
-#       (most likely) need to specify which branch to use - after the slashes: //
-
-flatpak_packages_extra_user:
-  - com.spotify.Client                    # Music Streamer
-  - org.soundconverter.SoundConverter     # Sound Converter
-  - org.gnome.EasyTAG                     # ID3 editor for MP3
-  - org.gimp.GIMP                         # Graphical Editor
-  - org.inkscape.Inkscape                 # Vector Editor
-  - org.telegram.desktop                  # Instant Messaging App
-  - org.qbittorrent.qBittorrent           # BitTorrent Client
+#NTFS_mount_points:
+#  - device:       /dev/sda1
+#    mount_point:  /mnt/Downloads
+#
+#  - device:       /dev/sdb2
+#    mount_point:  /mnt/Storage
+#
+#  - device:       /dev/sdc1
+#    mount_point:  /mnt/Scratch
 
 # ---| System configuration |--------------------------------------------------
 laptop_config:        false
 redhat_work_config:   true
-#CUPS_on_LDAP_server:  false
