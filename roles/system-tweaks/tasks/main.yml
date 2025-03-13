@@ -34,7 +34,7 @@
         accept_newhostkey:  true
       loop:                 "{{ tweaks_repos.root + tweaks_repos.user }}"
       loop_control:
-        label:              "/tmp/repos/{{ item.repo | basename }} "
+        label:              "/tmp/repos/{{ item.repo | basename }}"
 
     - name: Make sure the /usr/local/bin binaries are not running
       shell:        'killall -q {{ item }} || :'
