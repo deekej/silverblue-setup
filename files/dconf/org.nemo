@@ -39,6 +39,7 @@ search-sort-column='name'
 
 [window-state]
 geometry='1446x829+24+21'
-maximized=true
+maximized=false
 sidebar-bookmark-breakpoint=5
+sidebar-width=225
 start-with-sidebar=true

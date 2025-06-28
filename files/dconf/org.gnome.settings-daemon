@@ -1,6 +1,8 @@
 [plugins/color]
 night-light-enabled=true
-night-light-last-coordinates=(49.472099999999998, 17.052099999999999)
+night-light-last-coordinates=(50.046500000000002, 14.4565)
+night-light-schedule-automatic=true
+night-light-temperature=uint32 2700
 
 [plugins/housekeeping]
 free-percent-notify=0.25
@@ -53,7 +55,7 @@ command='timeular'
 name='Timeular'
 
 [plugins/media-keys/custom-keybindings/custom5]
-binding='<Alt>F3'
+binding='<Alt>F1'
 command='vpnup'
 name='Turn on VPN'
 

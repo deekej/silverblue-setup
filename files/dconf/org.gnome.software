@@ -1,7 +1,9 @@
 [/]
-check-timestamp=int64 1740393877
+allow-updates=true
+check-timestamp=int64 1751108707
 first-run=false
-flatpak-purge-timestamp=int64 1740397391
+flatpak-purge-timestamp=int64 1750331040
 prompt-for-nonfree=false
 show-only-verified-apps=true
-update-notification-timestamp=int64 1740301638
+update-notification-timestamp=int64 1750408906
+upgrade-notification-timestamp=int64 1751019109

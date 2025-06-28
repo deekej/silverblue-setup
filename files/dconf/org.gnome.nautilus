@@ -8,11 +8,11 @@ default-zoom-level='standard'
 default-visible-columns=['name', 'size', 'date_modified', 'starred']
 
 [preferences]
-default-folder-viewer='icon-view'
+default-folder-viewer='list-view'
 migrated-gtk-settings=true
 search-filter-time-type='last_modified'
 
 [window-state]
 initial-size=(890, 550)
-initial-size-file-chooser=(890, 550)
+initial-size-file-chooser=(1776, 1154)
 maximized=false

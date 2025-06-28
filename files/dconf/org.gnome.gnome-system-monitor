@@ -1,4 +1,5 @@
 [/]
+cpu-colors=[(uint32 0, '#e01b24'), (1, '#ff7800'), (2, '#f6d32d'), (3, '#33d17a'), (4, '#26a269'), (5, '#62a0ea'), (6, '#1c71d8'), (7, '#613583'), (8, '#9141ac'), (9, '#c061cb'), (10, '#ffbe6f'), (11, '#f9f06b'), (12, '#8ff0a4'), (13, '#2ec27e'), (14, '#1a5fb4'), (15, '#c061cb'), (16, '#f3327999b50d'), (17, '#7999d888f332'), (18, '#f332ea607999'), (19, '#c6e47999f332'), (20, '#7999f332a369'), (21, '#f3327fee7999'), (22, '#799996bff332'), (23, '#ba3af3327999'), (24, '#f3327999ddb6'), (25, '#7999f332e533'), (26, '#f332c1b77999'), (27, '#9e3c7999f332'), (28, '#7999f3327ac1'), (29, '#f33279999bec'), (30, '#7999bf67f332'), (31, '#e2e3f3327999')]
 current-tab='processes'
 disks-interval=5000
 graph-update-interval=3000
@@ -7,7 +8,9 @@ network-total-in-bits=false
 show-dependencies=false
 show-whose-processes='all'
 update-interval=3000
+window-height=720
 window-state=(3440, 1404, 0, 36)
+window-width=800
 
 [proctree]
 col-0-visible=true
@@ -61,5 +64,5 @@ col-8-width=86
 col-9-visible=false
 col-9-width=504
 columns-order=[0, 8, 1, 12, 2, 26, 11, 15, 4, 6, 3, 18, 14, 10, 25, 24, 23, 22, 16, 9, 13, 17, 19, 20, 21, 7]
-sort-col=0
+sort-col=12
 sort-order=0
