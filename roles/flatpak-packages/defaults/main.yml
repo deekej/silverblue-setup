@@ -23,6 +23,7 @@ flatpak_packages_default:
   - org.fedoraproject.MediaWriter           # Live USB Creator
   - org.gnome.baobab                        # Disk Usage Analyzer
   - org.gnome.DejaDup                       # Backup Software
+  - org.videolan.VLC                        # Video Player
 
 flatpak_packages_fedora_default:
   - org.fedoraproject.FirewallConfig        # Firewalld GUI App

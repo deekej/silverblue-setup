@@ -296,10 +296,10 @@ flatpak_packages_extra_work: []
 flatpak_packages_extra_theme: []
 
 # Codecs for VLC/Firefox in flatpak:
-flatpak_packages_extra_codecs: []
-#  # NOTE: Update these codecs to latest runtimes before running the playbook.
-#  - org.freedesktop.Platform.ffmpeg-full/x86_64/24.08
-#  - org.freedesktop.Platform.openh264/x86_64/2.4.1
+flatpak_packages_extra_codecs:
+# NOTE: Update these codecs to latest runtimes before running the playbook.
+  - org.freedesktop.Platform.ffmpeg-full/x86_64/24.08
+  - org.freedesktop.Platform.openh264/x86_64/2.5.1
 
 flatpak_packages_extra_runtimes:
   - org.telegram.desktop.webview

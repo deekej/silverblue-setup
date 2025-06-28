@@ -30,7 +30,6 @@ packages_default:
   - speedtest-cli
   - terminator
   - tilix
-  - vlc
   - vim
   - vim-enhanced
   - vim-X11
