@@ -7,6 +7,7 @@ kickstart_fedora_min_version: 40
 kickstart_fedora_arch: x86_64
 
 kickstart_subvolumes: []
+kickstart_dualboot: false
 
 kickstart_system_language: en_US.UTF-8
 kickstart_keyboard_layout: en

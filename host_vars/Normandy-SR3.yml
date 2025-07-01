@@ -12,8 +12,12 @@ kickstart_network_devices:
 # NOTE: The disk id needs to be manually specified before every installation!!
 kickstart_disk_id: ata-WDC_WDS500G1R0A-68A4W0_23464V801616
 
+# This forces the usage of XFS for /boot partition (to support dual boot):
+kickstart_dualboot: true
+
 # ---| Partitions Configuration |----------------------------------------------
-NTFS_mounts:  false
+dualboot:           true
+NTFS_mounts:        false
 
 #NTFS_mount_points:
 #  - device:       /dev/sda1

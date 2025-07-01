@@ -10,7 +10,7 @@
     include_aggregate_mounts: false
   register: mount
 
-- name: Set the 'mount_points' variable
+- name: Set the 'mount_points' variables
   set_fact:
     luks_part:        "{{ mount.ansible_facts.mount_points['/'].device }}"
     efi_part_UUID:    "{{ mount.ansible_facts.mount_points['/boot/efi'].uuid }}"

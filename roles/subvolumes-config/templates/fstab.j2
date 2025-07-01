@@ -11,7 +11,7 @@
 #
 
 # ---| Non-BTRFS mounts |--------------------------------------------
-UUID={{ boot_part_UUID }} /boot                                     btrfs   defaults                                                                                                        0 0
+UUID={{ boot_part_UUID }} /boot                                     {{ (dualboot|bool) | ternary(' xfs ','btrfs') }}   defaults                                                                                                        0 0
 UUID={{ efi_part_UUID }}                            /boot/efi                                 vfat    defaults,uid=0,gid=0,umask=077,shortname=winnt                                                                  0 2
 
 # ---| Mounts wo/ ZSTD compression |---------------------------------

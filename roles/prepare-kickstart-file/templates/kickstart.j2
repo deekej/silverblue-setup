@@ -20,11 +20,17 @@ clearpart --drives=/dev/disk/by-id/{{ kickstart_disk_id }} --all --initlabel
 # Disk partitioning information (minimum disk size: of 250 GB)
 part /boot/efi        --fstype="efi"      --ondisk=/dev/disk/by-id/{{ kickstart_disk_id }} --size=1024          --fsoptions="umask=0077,shortname=winnt"
 part biosboot         --fstype="biosboot" --ondisk=/dev/disk/by-id/{{ kickstart_disk_id }} --size=1
-part btrfs.boot       --fstype="btrfs"    --ondisk=/dev/disk/by-id/{{ kickstart_disk_id }} --size=3072
+
+{% if (kickstart_dualboot | bool) %}
+part /boot            --fstype="xfs"      --ondisk=/dev/disk/by-id/{{ kickstart_disk_id }} --size=3072
+{% else %}
+part  btrfs.boot      --fstype="btrfs"    --ondisk=/dev/disk/by-id/{{ kickstart_disk_id }} --size=3072
+btrfs /boot           --label=boot --data=single btrfs.boot
+{% endif %}
+
 part btrfs.silverblue --fstype="btrfs"    --ondisk=/dev/disk/by-id/{{ kickstart_disk_id }} --size=225280 --grow --fsoptions="compress=zstd:1,noatime" --encrypted --luks-version=luks2
 
-btrfs /boot --label=boot   --data=single btrfs.boot
-btrfs none  --label=fedora --data=single btrfs.silverblue
+btrfs none            --label=fedora --data=single btrfs.silverblue
 btrfs /               --subvol LABEL=fedora --name=@
 btrfs /var            --subvol LABEL=fedora --name=var
 btrfs /var/log        --subvol LABEL=fedora --name=var.log
