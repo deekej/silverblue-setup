@@ -12,10 +12,10 @@
 
 - name: Set the 'mount_points' variables
   set_fact:
-    luks_part:        "{{ mount.ansible_facts.mount_points['/'].device }}"
+    luks_part:        "{{ mount.ansible_facts.mount_points['/var/home'].device }}"
     efi_part_UUID:    "{{ mount.ansible_facts.mount_points['/boot/efi'].uuid }}"
     boot_part_UUID:   "{{ mount.ansible_facts.mount_points['/boot'].uuid }}"
-    btrfs_part_UUID:  "{{ mount.ansible_facts.mount_points['/'].uuid }}"
+    btrfs_part_UUID:  "{{ mount.ansible_facts.mount_points['/var/home'].uuid }}"
 
 # -----------------------------------------------------------------------------
 

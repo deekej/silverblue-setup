@@ -14,7 +14,7 @@
 
 - name: Set the 'luks_part' variable
   set_fact:
-    luks_part: "{{ mount.ansible_facts.mount_points['/'].device }}"
+    luks_part: "{{ mount.ansible_facts.mount_points['/var/home'].device }}"
   when: luks_part is not defined or luks_part|length == 0
 
 - name: Make sure the BTRFS mount point folder /mnt/btrfs exists
