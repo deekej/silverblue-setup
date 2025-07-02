@@ -77,26 +77,6 @@
 
     # ---| TEMPORARY WORKAROUNDS / FIXES |-------------------------------------
 
-    # NOTE: Temporary workaround - expected to be fixed in Fedora 42.
-    #       https://gitlab.com/fedora/ostree/sig/-/issues/6
-    - name: Use the correct keyboard layout when unlocking the LUKS partition [WORKAROUND / FIX]
-      shell: rpm-ostree cancel &> /dev/null && rpm-ostree initramfs-etc --track=/etc/vconsole.conf
-      register: command
-      changed_when: "'No changes.' not in command.stdout"
-
-    - name: REBOOT INFO
-      when: "'No changes.' not in command.stdout"
-      debug:
-        msg: |-
-          Rebooting the machine... Please, unlock the device during the next boot!
-
-    - name: Reboot the machine for the changes to take effect
-      when: "'No changes.' not in command.stdout"
-      reboot:
-        pre_reboot_delay:   "{{ pre_reboot_delay }}"
-        reboot_timeout:     "{{ reboot_timeout }}"
-        post_reboot_delay:  "{{ post_reboot_delay }}"
-
   # ---------------------------------------------------------------------------
 
   roles:
