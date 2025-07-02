@@ -17,6 +17,18 @@
     boot_part_UUID:   "{{ mount.ansible_facts.mount_points['/boot'].uuid }}"
     btrfs_part_UUID:  "{{ mount.ansible_facts.mount_points['/var/home'].uuid }}"
 
+# Make sure we do not end up with unbootable machine:
+- name: Check the obtained mount points
+  assert:
+    that:
+      - luks_part|regex_search('^\/dev\/mapper\/luks-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$') != none
+      - efi_part_UUID|regex_search('^[0-9A-F]{4}-[0-9A-F]{4}$') != none
+      - boot_part_UUID|regex_search('^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$') != none
+      - btrfs_part_UUID|regex_search('^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$') != none
+    quiet: true
+    fail_msg: |-
+      Some mount points were not obtained properly! Terminatings...
+
 # -----------------------------------------------------------------------------
 
 - name: Create the BTRFS mount point directory {{ btrfs_mount_point }}
