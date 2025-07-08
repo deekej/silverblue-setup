@@ -11,7 +11,7 @@
 #
 
 # ---| Non-BTRFS mounts |--------------------------------------------
-UUID={{ boot_part_UUID }} /boot                                     {{ (dualboot|bool) | ternary(' xfs ','btrfs') }}   defaults                                                                                                        0 0
+UUID={{ boot_part_UUID }} /boot                                     {{ (dualboot|bool) | ternary('xfs  ','btrfs') }}   defaults                                                                                                        0 0
 UUID={{ efi_part_UUID }}                            /boot/efi                                 vfat    defaults,uid=0,gid=0,umask=077,shortname=winnt                                                                  0 2
 
 # ---| Mounts wo/ ZSTD compression |---------------------------------
@@ -24,22 +24,22 @@ UUID={{ btrfs_part_UUID }} /var/log                                  btrfs   com
 UUID={{ btrfs_part_UUID }} /var/home                                 btrfs   compress=zstd:1,x-systemd.device-timeout=0,noatime,subvol=var.home                                              0 0
 
 # Dedicated subvolumes for fine-control for snapper's functionality:
-UUID={{ btrfs_part_UUID }} /var/home/{{ username }}                          btrfs   compress=zstd:1,x-systemd.device-timeout=0,noatime,subvol={{ username }}                                    0 0
+UUID={{ btrfs_part_UUID }} /var/home/{{ username }}                          btrfs   compress=zstd:1,x-systemd.device-timeout=0,noatime,subvol={{ username }}                                                0 0
 
-UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/.var                     btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,subvol={{ username }}.var                    0 0
-UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/devel                    btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,subvol={{ username }}.devel                  0 0
-UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/Documents                btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,subvol={{ username }}.documents              0 0
-UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/Dropbox                  btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,subvol={{ username }}.dropbox                0 0
-UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/Music                    btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,subvol={{ username }}.music                  0 0
-UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/Pictures                 btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,subvol={{ username }}.pictures               0 0
-UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/Videos                   btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,subvol={{ username }}.videos                 0 0
+UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/.var                     btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,subvol={{ username }}.var                   0 0
+UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/devel                    btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,subvol={{ username }}.devel                 0 0
+UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/Documents                btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,subvol={{ username }}.documents             0 0
+UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/Dropbox                  btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,subvol={{ username }}.dropbox               0 0
+UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/Music                    btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,subvol={{ username }}.music                 0 0
+UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/Pictures                 btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,subvol={{ username }}.pictures              0 0
+UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/Videos                   btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,subvol={{ username }}.videos                0 0
 
 # ---| Mounts wo/ data COW eanbled |--------------------------------
-UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/.backups                 btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,nodatacow,subvol={{ username }}.backups      0 0
-UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/.cache                   btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,nodatacow,subvol={{ username }}.cache        0 0
-UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/.local/share/containers  btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,nodatacow,subvol={{ username }}.containers   0 0
-UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/build                    btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,nodatacow,subvol={{ username }}.build        0 0
-UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/Downloads                btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,nodatacow,subvol={{ username }}.downloads    0 0
+UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/.backups                 btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,nodatacow,subvol={{ username }}.backups     0 0
+UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/.cache                   btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,nodatacow,subvol={{ username }}.cache       0 0
+UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/.local/share/containers  btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,nodatacow,subvol={{ username }}.containers  0 0
+UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/build                    btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,nodatacow,subvol={{ username }}.build       0 0
+UUID={{ btrfs_part_UUID }} /var/home/{{ username }}/Downloads                btrfs   compress=zstd:1,x-systemd.device-timeout=0,x-gvfs-hide,x-gvfs-trash,noatime,nodatacow,subvol={{ username }}.downloads   0 0
 
 # ---| Special mounts |----------------------------------------------
 tmpfs                                     /tmp                                      tmpfs   defaults,nodev,nosuid,size={{ tmpfs_size }},noatime,mode=1777                                                                0 0
