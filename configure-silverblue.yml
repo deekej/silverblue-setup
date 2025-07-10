@@ -171,3 +171,5 @@
           the personal archives (via 'rm -f *.tar' command) in /mnt/btrfs after
           manually checking that everything works correctly!
 
+          Also, manually switch to root's ZSH with the 'chsh' command...
+
