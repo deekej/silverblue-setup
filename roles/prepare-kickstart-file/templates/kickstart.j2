@@ -87,6 +87,7 @@ services --enabled={{ kickstart_services_enabled | join(',') }}
 %post --erroronfail
 cp /etc/skel/.bash* /root
 echo "TODO" > /etc/.initial-setup
+fstrim -v --all --quiet-unsupported
 %end
 
 # Reboot after successful installation - so we can continue with the configuration via Ansible:
