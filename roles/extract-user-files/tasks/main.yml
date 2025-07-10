@@ -78,4 +78,5 @@
     loop_var:       archive
     label:          "/mnt/btrfs/{{ archive.item }}.tar"
   when:             archive.stat.exists|bool
+  ignore_errors:    true
 
