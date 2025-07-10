@@ -27,7 +27,7 @@
       - btrfs_part_UUID|regex_search('^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$') != none
     quiet: true
     fail_msg: |-
-      Some mount points were not obtained properly! Terminatings...
+      Some mount points were not obtained properly! Terminating...
 
 # -----------------------------------------------------------------------------
 
@@ -95,6 +95,24 @@
     fstype: btrfs
 
 # -----------------------------------------------------------------------------
+
+- name: Copy substitued GRUB2 config template to /boot/grub2 folder
+  when:         dualboot|bool
+  template:
+    src:        templates/grub2-user.cfg.j2
+    dest:       /boot/grub2/user.cfg
+    owner:      root
+    group:      root
+    mode:       '0644'
+
+- name: Update the GRUB2 configuration
+  when:         dualboot|bool
+  command:      grub2-mkconfig -o /boot/grub2/grub.cfg
+  register:     grub_mkconfig
+  changed_when:
+    - grub_mkconfig.rc == 0
+  failed_when:
+    - grub_mkconfig.rc != 0
 
 - name: Check if the previous backup of /etc/fstab already exists
   stat:
