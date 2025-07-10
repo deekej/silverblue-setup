@@ -47,6 +47,7 @@ kickstart_setup_password: !vault |
   3562343439396538310a656266316132613039666435353436343064643336636337636433383933
   3564
 
+kickstart_fedora_version: 41
 kickstart_fedora_arch: x86_64
 
 kickstart_system_language: en_US.UTF-8
