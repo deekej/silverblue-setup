@@ -77,21 +77,34 @@
 
     # ---| TEMPORARY WORKAROUNDS / FIXES |-------------------------------------
 
-    # NOTE: Temporary workaround - expected to be fixed in Fedora 42.
+    # NOTE: Temporary workarounds - expected to be fixed in Fedora Silverblue 42+.
     #       https://gitlab.com/fedora/ostree/sig/-/issues/6
+    #       https://jurf.github.io/2020/10/22/quick-tip-silverblue-trim/
+    - name: PROGRESS INFO
+      debug:
+        msg: |-
+          Enabling usage of fstrim on LUKS encrypted partition & correct keyboard layout
+          when unlocking the LUKS encrypted partition... This might take a long time!
+
     - name: Use the correct keyboard layout when unlocking the LUKS partition [WORKAROUND / FIX]
       shell: rpm-ostree cancel &> /dev/null && rpm-ostree initramfs-etc --track=/etc/vconsole.conf
-      register: command
-      changed_when: "'No changes.' not in command.stdout"
+      register: initramfs
+      changed_when: "'No changes.' not in initramfs.stdout"
+
+    - name: Enable usage of fstrim on LUKS encrypted partition
+      shell: rpm-ostree cancel && rpm-ostree kargs --append-if-missing=rd.luks.options=discard --unchanged-exit-77
+      register: kargs_append
+      failed_when:  kargs_append.rc not in [0, 77]
 
     - name: REBOOT INFO
-      when: "'No changes.' not in command.stdout"
+      when: ("'No changes.' not in initramfs.stdout") or (kargs_append.rc != 77)
       debug:
         msg: |-
           Rebooting the machine... Please, unlock the device during the next boot!
 
+
     - name: Reboot the machine for the changes to take effect
-      when: "'No changes.' not in command.stdout"
+      when: ("'No changes.' not in initramfs.stdout") or (kargs_append.rc != 77)
       reboot:
         pre_reboot_delay:   "{{ pre_reboot_delay }}"
         reboot_timeout:     "{{ reboot_timeout }}"

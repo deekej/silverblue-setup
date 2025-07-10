@@ -2,32 +2,6 @@
 # vim: filetype=yaml.ansible
 # --------------------------
 
-- name: PROGRESS INFO
-  debug:
-    msg: |-
-      Enabling usage of fstrim on LUKS encrypted partition... This might take a long time!
-
-# https://jurf.github.io/2020/10/22/quick-tip-silverblue-trim/
-- name: Enable usage of fstrim on LUKS encrypted partition
-  shell:        rpm-ostree cancel && rpm-ostree kargs --append-if-missing=rd.luks.options=discard --unchanged-exit-77
-  register:     kargs_append
-  failed_when:  kargs_append.rc not in [0, 77]
-
-- name: REBOOT INFO
-  when:     kargs_append.rc != 77
-  debug:
-    msg: |-
-      Rebooting the machine... Please, unlock the device during the next boot!
-
-- name: Reboot the machine for the changes to take effect
-  when:     kargs_append.rc != 77
-  reboot:
-    pre_reboot_delay:   "{{ pre_reboot_delay }}"
-    reboot_timeout:     "{{ reboot_timeout }}"
-    post_reboot_delay:  "{{ post_reboot_delay }}"
-
-# -----------------------------------------------------------------------------
-
 - name: Check if GIT repository exists in /etc
   stat:
     path:       /etc/.git/
