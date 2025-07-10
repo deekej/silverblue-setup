@@ -140,7 +140,6 @@ btrfs_subvolumes_noarchive:
   - "{{ username }}.build"
   - "{{ username }}.cache"
   - "{{ username }}.containers"
-  - "{{ username }}.var"
 
 # NOTE: Do NOT create .snapshots/ subfolder! Existing subfolder prevents
 #       creation of BTRFS subvolume by snapper...
