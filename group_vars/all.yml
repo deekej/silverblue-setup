@@ -281,6 +281,7 @@ flatpak_packages_to_remove:
 #       (most likely) need to specify which branch to use - after the slashes: //
 flatpak_packages_extra_user:
   - com.bitwarden.desktop                 # Bitwarden Desktop App
+  - com.brave.Browser                     # Brave Browser for personal stuff
   - com.spotify.Client                    # Music Streamer
   - me.proton.Mail                        # Proton Mail / Calendar Desktop App
   - org.gnome.EasyTAG                     # ID3 editor for MP3
