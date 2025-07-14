@@ -266,7 +266,7 @@ packages_extra_utilities:
   - thefuck
   - wavemon
   - wmctrl
-  - youtube-dl
+  - yt-dlp
   - zsh-autosuggestions
   - zsh-lovers
   - zsh-syntax-highlighting
