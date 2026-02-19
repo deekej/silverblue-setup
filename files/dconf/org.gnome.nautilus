@@ -2,17 +2,17 @@
 default-compression-format='tar.xz'
 
 [icon-view]
-default-zoom-level='standard'
+default-zoom-level='medium'
 
 [list-view]
 default-visible-columns=['name', 'size', 'date_modified', 'starred']
 
 [preferences]
-default-folder-viewer='list-view'
+default-folder-viewer='icon-view'
 migrated-gtk-settings=true
 search-filter-time-type='last_modified'
 
 [window-state]
 initial-size=(890, 550)
-initial-size-file-chooser=(1776, 1154)
+initial-size-file-chooser=(1776, 1032)
 maximized=false

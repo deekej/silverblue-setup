@@ -18,7 +18,7 @@ executable-text-activation='display'
 show-advanced-permissions=true
 show-compact-view-icon-toolbar=false
 show-full-path-titles=true
-show-hidden-files=true
+show-hidden-files=false
 show-location-entry=true
 show-new-folder-icon-toolbar=true
 show-open-in-terminal-toolbar=true
@@ -35,11 +35,12 @@ selection-menu-make-link=true
 selection-menu-scripts=false
 
 [search]
+search-reverse-sort=false
 search-sort-column='name'
 
 [window-state]
-geometry='1446x829+24+21'
-maximized=false
+geometry='1361x829+24+21'
+maximized=true
 sidebar-bookmark-breakpoint=5
 sidebar-width=225
 start-with-sidebar=true

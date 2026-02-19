@@ -64,5 +64,5 @@ col-8-width=86
 col-9-visible=false
 col-9-width=504
 columns-order=[0, 8, 1, 12, 2, 26, 11, 15, 4, 6, 3, 18, 14, 10, 25, 24, 23, 22, 16, 9, 13, 17, 19, 20, 21, 7]
-sort-col=12
+sort-col=8
 sort-order=0

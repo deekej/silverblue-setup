@@ -1,6 +1,6 @@
 [plugins/color]
 night-light-enabled=true
-night-light-last-coordinates=(50.046500000000002, 14.4565)
+night-light-last-coordinates=(49.5944, 18.010300000000001)
 night-light-schedule-automatic=true
 night-light-temperature=uint32 2700
 

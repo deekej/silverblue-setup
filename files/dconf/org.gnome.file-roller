@@ -1,6 +1,14 @@
+[dialogs/extract]
+height=800
+recreate-folders=true
+skip-newer=false
+width=1000
+
 [dialogs/new]
 default-extension='.tar.xz'
+encrypt-header=false
 expand-options=true
+volume-size=104857
 
 [file-selector]
 show-hidden=false

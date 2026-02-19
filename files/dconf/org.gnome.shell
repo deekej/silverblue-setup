@@ -3,8 +3,9 @@ app-picker-layout=[{'audacious.desktop': <{'position': <0>}>, 'org.gnome.Contact
 command-history=['reboot', 'dconf-editor']
 disabled-extensions=['openweather-extension@penguin-teal.github.io', 'apps-menu@gnome-shell-extensions.gcampax.github.com', 'Vitals@CoreCoding.com']
 enabled-extensions=['background-logo@fedorahosted.org', 'bluetooth-quick-connect@bjarosze.gmail.com', 'blur-my-shell@aunetx', 'dash-to-dock@micxgx.gmail.com', 'unredirect@vaina.lt', 'hide-universal-access@akiirui.github.io', 'lockkeys@vaina.lt', 'MaximizeToEmptyWorkspace-extension@kaisersite.de', 'places-menu@gnome-shell-extensions.gcampax.github.com', 'system-monitor-next@paradoxxx.zero.gmail.com', 'scroll-workspaces@gfxmonk.net', 'transparent-window-moving@noobsai.github.com', 'trayIconsReloaded@selfmade.pl', 'unblank@sun.wxg@gmail.com', 'unite@hardpixel.eu', 'windowIsReady_Remover@nunofarruca@gmail.com', 'GPaste@gnome-shell-extensions.gnome.org', 'status-area-horizontal-spacing@mathematical.coffee.gmail.com', 'arrangeWindows@sun.wxg@gmail.com', 'user-theme@gnome-shell-extensions.gcampax.github.com', 'just-perfection-desktop@just-perfection']
-favorite-apps=['nemo.desktop', 'com.bitwarden.desktop.desktop', 'me.proton.Mail.desktop', 'org.telegram.desktop.desktop', 'com.brave.Browser.desktop', 'brave-browser.desktop', 'slack.desktop', 'google-mail.desktop', 'google-calendar.desktop', 'terminator.desktop', 'gvim.desktop', 'com.spotify.Client.desktop', 'youtube.desktop']
+favorite-apps=['nemo.desktop', 'me.proton.Mail.desktop', 'com.bitwarden.desktop.desktop', 'org.telegram.desktop.desktop', 'com.brave.Browser.desktop', 'brave-browser.desktop', 'slack.desktop', 'google-mail.desktop', 'google-calendar.desktop', 'google-meet.desktop', 'terminator.desktop', 'gvim.desktop', 'com.spotify.Client.desktop', 'youtube.desktop']
 last-selected-power-profile='power-saver'
+remember-mount-password=false
 welcome-dialog-last-shown-version='47.4'
 
 [extensions/bluetooth-quick-connect]
@@ -409,4 +410,4 @@ app-icon-mode='app-icon-only'
 current-workspace-only=false
 
 [world-clocks]
-locations=@av []
+locations=[<(uint32 2, <('Boston', 'KBOS', true, [(0.73933117517543911, -1.2393680058718144)], [(0.73929408692883414, -1.2402270045697685)])>)>, <(uint32 2, <('San Francisco', 'KOAK', true, [(0.65832848982162007, -2.133408063190589)], [(0.659296885757089, -2.1366218601153339)])>)>, <(uint32 2, <('Beijing', 'ZBAA', true, [(0.69696814214530467, 2.0295270260429752)], [(0.69689057971334611, 2.0313596217575696)])>)>, <(uint32 2, <('Rio de Janeiro', 'SBRJ', true, [(-0.39968039870670141, -0.75340046626198298)], [(-0.39968039870670141, -0.75456400746111763)])>)>, <(uint32 2, <('Pune', 'VAPO', true, [(0.32019112325387172, 1.2837088634636014)], [(0.32340951039454929, 1.2889256525978121)])>)>]
