@@ -1,0 +1,32 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+# Multi-boot configuration.
+
+- name: Copy substitued GRUB2 user config template to /boot/grub2 folder
+  when:         multiboot|bool
+  template:
+    src:        templates/grub2-user.cfg.j2
+    dest:       /boot/grub2/user.cfg
+    owner:      root
+    group:      root
+    mode:       '0644'
+
+- name: Copy the substituted GRUB2 custom config to /boot/grub2 folder (boot-entries)
+  when:         multiboot|bool
+  template:
+    src:        templates/grub2-custom.cfg.j2
+    dest:       /boot/grub2/custom.cfg
+    owner:      root
+    group:      root
+    mode:       '0644'
+
+# TODO:
+#   * Change the permissions for /boot to 0700 and root:root
+#   * Initialize the .git/ repository in the /boot
+#   * Add the .gitignore file in the /boot
+#   * Make first commit
+#   * Set upstream - different upstream for each hostname
+#   * Force push the initial commit
+#   * Drop the bash script into /etc/kernel/install.d folder
+#   * Add the custom NTFS entries into /etc/fstab for automount

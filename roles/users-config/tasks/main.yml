@@ -4,14 +4,14 @@
 # Users configuration.
 
 - name: Generate salted password hash for '{ username }}'
-  shell:    echo "{{ user_password_plain }}" | mkpasswd --method=yescrypt --stdin
+  shell: echo "{{ user_password_plain }}" | mkpasswd --method=yescrypt --stdin
   register: mkpasswd_user
-  no_log:   true
+  no_log: true
 
 - name: Generate salted password hash for 'root'
-  shell:    echo "{{ root_password_plain }}" | mkpasswd --method=yescrypt --stdin
+  shell: echo "{{ root_password_plain }}" | mkpasswd --method=yescrypt --stdin
   register: mkpasswd_root
-  no_log:   true
+  no_log: true
 
 - name: Store the salted password hashes into variables
   set_fact:
@@ -37,7 +37,7 @@
     password: "{{ user_password_hash }}"
     shell:    "{{ user_login_shell }}"
     append:   true
-  no_log:     true
+  no_log: true
 
 # -----------------------------------------------------------------------------
 
@@ -50,7 +50,7 @@
     password:       "{{ root_password_hash }}"
     password_lock:  "{{ root_password_lock }}"
     shell:          "{{ (initial_setup|bool) | ternary('/bin/bash', root_login_shell) }}"
-  no_log:           true
+  no_log: true
 
 # -----------------------------------------------------------------------------
 

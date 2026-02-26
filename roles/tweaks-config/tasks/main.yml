@@ -55,7 +55,7 @@
       loop_control:
         label:  "{{ item.dest }}"
 
-    - name: Copy the content of {{ item.repo }} repository into {{ item.dest }}
+    - name: Copy the content of repositories into their final destinations
       shell: cp -a /tmp/repos/{{ (item.repo | basename) ~ '/.' }} {{ item.dest ~ '/.' }}
       loop:  "{{ tweaks_repos.root + tweaks_repos.user }}"
       loop_control:

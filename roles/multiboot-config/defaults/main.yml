@@ -1,0 +1,12 @@
+---
+# vim: filetype=yaml.ansible
+# --------------------------
+# defaults file for roles/multiboot-config
+
+multiboot:          false
+grub_timeout:       11
+
+NTFS_mounts:        false
+NTFS_mount_points:
+  - device:         None
+    mount_point:    None

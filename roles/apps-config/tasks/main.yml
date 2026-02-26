@@ -6,6 +6,18 @@
 # Flatpak apps are restored by replacing their configuration stored in
 # ~/.var/app/app-name/config folders
 
+- name: PROGRESS INFO
+  debug:
+    msg: |-
+      Waiting for user {{ displayed_name }} to manually login into Gnome Shell...
+
+- name: Waiting for user {{ displayed_name }} to login into Gnome Shell
+  wait_for:
+    path:       /run/user/{{ user_id }}/bus
+    state:      present
+    sleep:      "{{ unlock_sleep }}"
+    timeout:    "{{ unlock_timeout }}"
+
 - name: Create a 'dconf' temporary folder in tmp/
   file:
     path:       /tmp/dconf
@@ -30,7 +42,7 @@
     loop_var:   schema
 
 - name: Load the backup of previously saved DCONF schemas
-  shell: cat {{ '/tmp/dconf/' ~ schema }} | dbus-run-session dconf load {{ '/' ~ (schema | regex_replace ('\.', '/')) ~ '/' }}
+  shell: cat {{ '/tmp/dconf/' ~ schema }} | dconf load {{ '/' ~ (schema | regex_replace ('\.', '/')) ~ '/' }}
   loop:         "{{ dconf_tracked_schemas }}"
   loop_control:
     loop_var:   schema
@@ -39,7 +51,12 @@
   become:       true
   become_user:  "{{ username }}"
   environment:
-    DISPLAY:    '0:'
+    DISPLAY:                  '0:'
+    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ user_id }}/bus"
+
+- name: Waiting for user {{ displayed_name }} to logout from Gnome Shell
+  pause:
+    prompt: Waiting for logout confirmation...
 
 # -----------------------------------------------------------------------------
 

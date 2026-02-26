@@ -1,7 +1,7 @@
 
 #
 # /etc/fstab
-# This file has been created by Ansible @ {{ ansible_hostname }}
+# This file has been created by Ansible @ {{ ansible_facts['hostname'] }}
 #
 # Accessible filesystems, by reference, are maintained under '/dev/disk/'.
 # See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info.
@@ -15,7 +15,7 @@ UUID={{ boot_part_UUID }} /boot                                     {{ (dualboot
 UUID={{ efi_part_UUID }}                            /boot/efi                                 vfat    defaults,uid=0,gid=0,umask=077,shortname=winnt                                                                  0 2
 
 # ---| Mounts wo/ ZSTD compression |---------------------------------
-UUID={{ btrfs_part_UUID }} /var/containers                           btrfs                   x-systemd.device-timeout=0,noatime,subvol=var.containers                                        0 0
+UUID={{ btrfs_part_UUID }} /var/lib/containers                       btrfs                   x-systemd.device-timeout=0,noatime,subvol=var.containers                                        0 0
 
 # ---| Mounts w/ ZSTD compression |----------------------------------
 UUID={{ btrfs_part_UUID }} /                                         btrfs   compress=zstd:1,x-systemd.device-timeout=0,noatime,subvol=@                                                     0 0

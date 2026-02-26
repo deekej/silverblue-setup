@@ -8,6 +8,10 @@ reboot_timeout:     1800
 post_reboot_delay:  15
 pre_reboot_delay:   5
 
+# User account unlock:
+unlock_timeout:     1800
+unlock_sleep:       5
+
 # ---| Default User Configuration |--------------------------------------------
 displayed_name: Dee'Kej
 username:       deekej
@@ -253,22 +257,20 @@ packages_extra_utilities:
   - asciinema
   - autojump-zsh
   - cowsay
-  - code
   - ctags
+  - cursor
+  - dos2unix
   - fortune-mod
   - fzf
   - gh
-  - peek
   - python-msgpack
   - python-neovim
   - rar
   - screenkey
   - thefuck
-  - wavemon
   - wmctrl
   - yt-dlp
   - zsh-autosuggestions
-  - zsh-lovers
   - zsh-syntax-highlighting
 
 # ---| Flatpak packages configuration |----------------------------------------

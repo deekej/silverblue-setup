@@ -1,0 +1,8 @@
+{% for entry in boot_entries %}
+menuentry '{{ entry.name }}' --class windows --class os $menuentry_id_option 'osprober-efi-{{ entry.EFI_UUID }}' {
+  insmod part_gpt
+  insmod fat
+  search --no-floppy --fs-uuid --set=root {{ entry.EFI_UUID }}
+  chainloader /EFI/Microsoft/Boot/bootmgfw.efi
+}
+{% endfor %}

@@ -13,11 +13,18 @@ kickstart_network_devices:
 kickstart_disk_id: ata-WDC_WDS100T1R0A-68A4W0_25201Q801240
 
 # This forces the usage of XFS for /boot partition (to support dual boot):
-kickstart_dualboot: true
+kickstart_multiboot: true
 
 # ---| Partitions Configuration |----------------------------------------------
-dualboot:           true
+multiboot:          true
 NTFS_mounts:        false
+
+boot_entries:
+  - name:           Windows 11 (LTSC)
+    EFI_UUID:       2400-112A
+
+  - name:           Windows 10 (LTSC)
+    EFI_UUID:       2A5C-74A6
 
 #NTFS_mount_points:
 #  - device:       /dev/sda1

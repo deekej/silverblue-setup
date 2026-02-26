@@ -10,15 +10,15 @@
       delegate_to: controller
       tags: always
       block:
-        - name: Check the config file exists for "{{ ansible_hostname }}"
+        - name: Check the config file exists for "{{ ansible_facts['hostname'] }}"
           stat:
-            path: "host_vars/{{ ansible_hostname }}.yml"
+            path: "host_vars/{{ ansible_facts['hostname'] }}.yml"
           register: config_path
           changed_when: false
 
         - name: Fail if the config file does not exist
           fail:
-            msg: "host_vars/{{ ansible_hostname }}.yml config file does not exist. Is the correct host set?"
+            msg: "host_vars/{{ ansible_facts['hostname'] }}.yml config file does not exist. Is the correct host set?"
           when: not config_path.stat.exists
 
     - name: Check if the initial setup was previously finished
@@ -62,18 +62,18 @@
     - name: Disable automatic Gnome Software updates to prevent interruptions // root
       shell:        gsettings get org.gnome.software allow-updates && gsettings set org.gnome.software allow-updates false
       register:     gsettings
-      failed_when:  gsettings.rc != 0
-      changed_when: gsettings.stdout == 'true'
+      failed_when:  gsettings.rc not in [0, 127]
+      changed_when: "'true' in gsettings.stdout"
 
-    - name: Disable automatic Gnome Software updates to prevent interruptions // user
-      shell:        gsettings get org.gnome.software allow-updates && dbus-run-session gsettings set org.gnome.software allow-updates false
-      register:     gsettings
-      failed_when:  gsettings.rc != 0
-      changed_when: gsettings.stdout == 'true'
-      become:       true
-      become_user:  "{{ (initial_setup|bool) | ternary('setup', username) }}"
-      environment:
-        DISPLAY:    '0:'
+    #- name: Disable automatic Gnome Software updates to prevent interruptions // user
+    #  shell:        gsettings get org.gnome.software allow-updates && dbus-run-session gsettings set org.gnome.software allow-updates false
+    #  register:     gsettings
+    #  failed_when:  gsettings.rc not in [0, 127]
+    #  changed_when: "'true' in gsettings.stdout"
+    #  become:       true
+    #  become_user:  "{{ (initial_setup|bool) | ternary('setup', username) }}"
+    #  environment:
+    #    DISPLAY:    '0:'
 
     # ---| TEMPORARY WORKAROUNDS / FIXES |-------------------------------------
 
@@ -81,17 +81,17 @@
     #       https://gitlab.com/fedora/ostree/sig/-/issues/6
     #       https://jurf.github.io/2020/10/22/quick-tip-silverblue-trim/
     #- name: PROGRESS INFO
-    #  debug:
-    #    msg: |-
-    #      Enabling usage of fstrim on LUKS encrypted partition & correct keyboard layout
-    #      when unlocking the LUKS encrypted partition... This might take a long time!
-
-    #- name: Use the correct keyboard layout when unlocking the LUKS partition [WORKAROUND / FIX]
-    #  shell: rpm-ostree cancel &> /dev/null && rpm-ostree initramfs-etc --track=/etc/vconsole.conf
-    #  register: initramfs
-    #  changed_when: "'No changes.' not in initramfs.stdout"
-
-    #- name: Enable usage of fstrim on LUKS encrypted partition
+    #  debug:#
+    #    msg:# |-
+    #      En#abling usage of fstrim on LUKS encrypted partition & correct keyboard layout
+    #      wh#en unlocking the LUKS encrypted partition... This might take a long time!
+             #
+    #- name: #Use the correct keyboard layout when unlocking the LUKS partition [WORKAROUND / FIX]
+    #  shell:# rpm-ostree cancel &> /dev/null && rpm-ostree initramfs-etc --track=/etc/vconsole.conf
+    #  regist#er: initramfs
+    #  change#d_when: "'No changes.' not in initramfs.stdout"
+             #
+    #- name: #Enable usage of fstrim on LUKS encrypted partition
     #  shell: rpm-ostree cancel && rpm-ostree kargs --append-if-missing=rd.luks.options=discard --unchanged-exit-77
     #  register: kargs_append
     #  failed_when:  kargs_append.rc not in [0, 77]
@@ -118,11 +118,12 @@
     - layered-packages
     - users-config
     - subvolumes-config
+    - multiboot-config
     - system-config
-    - system-tweaks
+    - tweaks-config
     - flatpak-packages
     - extract-user-files
-    - configure-apps
+    - apps-config
 
   # ---------------------------------------------------------------------------
 
@@ -147,15 +148,15 @@
       failed_when:  gsettings.rc != 0
       changed_when: gsettings.stdout == 'false'
 
-    - name: Re-enable automatic Gnome Software updates to prevent interruptions // {{ username }}
-      shell:        gsettings get org.gnome.software allow-updates && dbus-run-session gsettings set org.gnome.software allow-updates true
-      register:     gsettings
-      failed_when:  gsettings.rc != 0
-      changed_when: gsettings.stdout == 'false'
-      become:       true
-      become_user:  "{{ (initial_setup|bool) | ternary('setup', username) }}"
-      environment:
-        DISPLAY:    '0:'
+    #- name: Re-enable automatic Gnome Software updates to prevent interruptions // {{ username }}
+    #  shell:        gsettings get org.gnome.software allow-updates && dbus-run-session gsettings set org.gnome.software allow-updates true
+    #  register:     gsettings
+    #  failed_when:  gsettings.rc != 0
+    #  changed_when: gsettings.stdout == 'false'
+    #  become:       true
+    #  become_user:  "{{ (initial_setup|bool) | ternary('setup', username) }}"
+    #  environment:
+    #    DISPLAY:    '0:'
 
     - name: Remove the auxiliary 'setup' user and its files
       user:

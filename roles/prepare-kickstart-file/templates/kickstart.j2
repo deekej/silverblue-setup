@@ -18,24 +18,24 @@ ignoredisk --only-use=/dev/disk/by-id/{{ kickstart_disk_id }}
 clearpart --drives=/dev/disk/by-id/{{ kickstart_disk_id }} --all --initlabel
 
 # Disk partitioning information (minimum disk size: of 250 GB)
-part /boot/efi        --fstype="efi"      --ondisk=/dev/disk/by-id/{{ kickstart_disk_id }} --size=1024          --fsoptions="umask=0077,shortname=winnt"
-part biosboot         --fstype="biosboot" --ondisk=/dev/disk/by-id/{{ kickstart_disk_id }} --size=1
+part /boot/efi        --fstype=efi      --ondisk=/dev/disk/by-id/{{ kickstart_disk_id }} --size=2048          --fsoptions='umask=0077,shortname=winnt'
+part biosboot         --fstype=biosboot --ondisk=/dev/disk/by-id/{{ kickstart_disk_id }} --size=1
 
-{% if (kickstart_dualboot | bool) %}
-part /boot            --fstype="xfs"      --ondisk=/dev/disk/by-id/{{ kickstart_disk_id }} --size=3072
+{% if (kickstart_multiboot | bool) %}
+part /boot            --fstype=xfs      --ondisk=/dev/disk/by-id/{{ kickstart_disk_id }} --size=4096
 {% else %}
-part  btrfs.boot      --fstype="btrfs"    --ondisk=/dev/disk/by-id/{{ kickstart_disk_id }} --size=3072
+part  btrfs.boot      --fstype=btrfs    --ondisk=/dev/disk/by-id/{{ kickstart_disk_id }} --size=4096
 btrfs /boot           --label=boot --data=single btrfs.boot
 {% endif %}
 
-part btrfs.silverblue --fstype="btrfs"    --ondisk=/dev/disk/by-id/{{ kickstart_disk_id }} --size=225280 --grow --fsoptions="compress=zstd:1,noatime" --encrypted --luks-version=luks2
+part btrfs.silverblue --fstype=btrfs    --ondisk=/dev/disk/by-id/{{ kickstart_disk_id }} --size=225280 --grow --fsoptions='compress=zstd:1,noatime' --encrypted --luks-version=luks2
 
 btrfs none            --label=fedora --data=single btrfs.silverblue
-btrfs /               --subvol LABEL=fedora --name=@
-btrfs /var            --subvol LABEL=fedora --name=var
-btrfs /var/log        --subvol LABEL=fedora --name=var.log
-btrfs /var/containers --subvol LABEL=fedora --name=var.containers
-btrfs /var/home       --subvol LABEL=fedora --name=var.home
+btrfs /                   --subvol LABEL=fedora --name=@
+btrfs /var                --subvol LABEL=fedora --name=var
+btrfs /var/log            --subvol LABEL=fedora --name=var.log
+btrfs /var/lib/containers --subvol LABEL=fedora --name=var.containers
+btrfs /var/home           --subvol LABEL=fedora --name=var.home
 
 # Create multiple personal subvolumes - to allow better snapshots management:
 {% for subvolume in kickstart_subvolumes %}
@@ -43,7 +43,7 @@ btrfs {{ subvolume.path }} --subvol LABEL=fedora --name={{ subvolume.name }}
 {% endfor %}
 
 # OSTree (Silverblue) installation flavor:
-ostreesetup --osname="fedora" --remote="fedora" --url="file:///ostree/repo" --ref="fedora/{{ kickstart_fedora_version }}/{{ kickstart_fedora_arch }}/silverblue" --nogpg
+ostreesetup --osname=fedora --remote=fedora --url='file:///ostree/repo' --ref="fedora/{{ kickstart_fedora_version }}/{{ kickstart_fedora_arch }}/silverblue" --nogpg
 
 # System language:
 lang {{ kickstart_system_language }}
@@ -67,7 +67,7 @@ group --name=setup --gid=1001
 
 # NOTE: The actual users / passwords will be created with the follow-up setup with Ansible...
 #       The 'setup' user will be deleted once the installation & configuration has finished.
-user --name=setup --homedir=/var/home/setup --uid=1001 --gid=1001 --groups=setup,wheel --shell=/bin/bash --gecos="Ansible Setup" --iscrypted --password="{{ kickstart_setup_password | string | password_hash }}" # notsecret
+user --name=setup --homedir=/var/home/setup --uid=1001 --gid=1001 --groups=setup,wheel --shell=/bin/bash --gecos='Ansible Setup' --iscrypted --password="{{ kickstart_setup_password | string | password_hash }}" # notsecret
 
 # Add a dedicated SSH-key to the 'setup' user - so we can run the initialization Ansible playbook via it afterwards:
 sshkey --username=setup "{{ kickstart_setup_pubkey }}"
