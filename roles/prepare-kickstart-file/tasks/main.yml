@@ -21,7 +21,7 @@
 
     - name: Set the 'kickstart_fedora_version' variable to latest release
       set_fact:
-        kickstart_fedora_version: "{{ response.json | map(attribute='version') | max | int }}"
+        kickstart_fedora_version: "{{ response.json | map(attribute='version') | unique | select('match', '^[0-9]+$') | list | max | int }}"
 
 - name: Check if the 'kickstart_fedora_version' is set correctly
   fail:
