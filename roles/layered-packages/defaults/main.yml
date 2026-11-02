@@ -6,6 +6,7 @@ packages_default:
   - ansible
   - ansible-core
   - ansible-lint
+  - ansible-builder
   - audacious
   - brave-browser
   - colordiff
@@ -21,6 +22,7 @@ packages_default:
   - gpaste-ui
   - guvcview
   - htop
+  - neovim
   - pykickstart
   - python-passlib
   - rmlint

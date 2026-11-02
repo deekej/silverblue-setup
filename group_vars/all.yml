@@ -265,6 +265,7 @@ packages_extra_utilities:
   - gh
   - python-msgpack
   - python-neovim
+  - python-pip
   - rar
   - screenkey
   - thefuck
