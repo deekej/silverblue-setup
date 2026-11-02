@@ -1,7 +1,7 @@
 [/]
 accent-color='purple'
 clock-show-date=false
-color-scheme='prefer-dark'
+color-scheme='default'
 cursor-theme='Breeze_Light'
 enable-animations=true
 enable-hot-corners=false

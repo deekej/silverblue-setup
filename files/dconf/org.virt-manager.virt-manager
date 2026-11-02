@@ -1,9 +1,54 @@
 [/]
+manager-window-height=635
+manager-window-width=1217
 system-tray=true
+
+[confirm]
+delete-storage=true
+forcepoweroff=true
+unapplied-dev=true
+
+[connections]
+autoconnect=['qemu:///system']
+uris=['qemu:///system']
+
+[conns/qemu:system]
+window-size=(800, 600)
 
 [console]
 resize-guest=1
 
+[details]
+show-toolbar=true
+
+[new-vm]
+graphics-type='system'
+
+[paths]
+image-default='/var/home/deekej/Downloads'
+
 [stats]
 enable-disk-poll=true
 enable-memory-poll=true
+
+[urls]
+isos=['/var/home/deekej/Downloads/bazzite-gnome-stable-live-amd64.iso', '/var/home/deekej/Downloads/bazzite-gnome-stable-amd64.iso', '/var/home/deekej/Downloads/Fedora-Workstation-Live-x86_64-41-1.4.iso', '/var/home/deekej/Downloads/Fedora-Workstation-Live-43-1.6.x86_64.iso', '/var/home/deekej/Downloads/Fedora-Silverblue-ostree-x86_64-43-1.6.iso', '/var/home/deekej/Downloads/Win10_22H2_English_x64v1.iso']
+
+[vmlist-fields]
+disk-usage=false
+network-traffic=false
+
+[vms/54686c229d564614851db77d54f827ee]
+autoconnect=1
+resize-guest=1
+vm-window-size=(1280, 838)
+
+[vms/8b3f38fd5b57403b8d076775fd2a81f6]
+autoconnect=1
+resize-guest=1
+vm-window-size=(3440, 1392)
+
+[vms/93dfc0ccdc5443708cb18fcdec29cd73]
+autoconnect=1
+resize-guest=1
+vm-window-size=(1280, 867)

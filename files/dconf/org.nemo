@@ -35,12 +35,13 @@ selection-menu-make-link=true
 selection-menu-scripts=false
 
 [search]
-search-reverse-sort=false
-search-sort-column='name'
+search-reverse-sort=true
+search-sort-column='date_modified'
 
 [window-state]
-geometry='1361x829+24+21'
+geometry='1936x829+24+21'
 maximized=true
+side-pane-view='places'
 sidebar-bookmark-breakpoint=5
 sidebar-width=225
 start-with-sidebar=true

@@ -5,7 +5,7 @@ skip-newer=false
 width=1000
 
 [dialogs/new]
-default-extension='.tar.xz'
+default-extension='.zip'
 encrypt-header=false
 expand-options=true
 volume-size=104857

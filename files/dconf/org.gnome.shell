@@ -1,9 +1,10 @@
 [/]
-app-picker-layout=[{'audacious.desktop': <{'position': <0>}>, 'org.gnome.Contacts.desktop': <{'position': <1>}>, 'org.gnome.Weather.desktop': <{'position': <2>}>, 'org.gnome.clocks.desktop': <{'position': <3>}>, 'org.gnome.Maps.desktop': <{'position': <4>}>, 'org.gnome.Calendar.desktop': <{'position': <5>}>, 'org.gnome.Snapshot.desktop': <{'position': <6>}>, 'ca.desrt.dconf-editor.desktop': <{'position': <7>}>, 'org.gnome.Calculator.desktop': <{'position': <8>}>, 'org.gnome.EasyTAG.desktop': <{'position': <9>}>, 'org.gnome.Extensions.desktop': <{'position': <10>}>, 'org.gnome.Settings.desktop': <{'position': <11>}>, 'org.gnome.SystemMonitor.desktop': <{'position': <12>}>, 'org.fedoraproject.MediaWriter.desktop': <{'position': <13>}>, 'org.mozilla.firefox.desktop': <{'position': <14>}>, 'Utilities': <{'position': <15>}>, 'org.fedoraproject.FirewallConfig.desktop': <{'position': <16>}>, 'yelp.desktop': <{'position': <17>}>, 'com.github.tchx84.Flatseal.desktop': <{'position': <18>}>, 'org.gimp.GIMP.desktop': <{'position': <19>}>, 'google-docs.desktop': <{'position': <20>}>, 'google-drive.desktop': <{'position': <21>}>}, {'google-forms.desktop': <{'position': <0>}>, 'google-maps.desktop': <{'position': <1>}>, 'google-meet.desktop': <{'position': <2>}>, 'google-sheets.desktop': <{'position': <3>}>, 'google-slides.desktop': <{'position': <4>}>, 'org.gnome.GPaste.Ui.desktop': <{'position': <5>}>, 'org.gnome.GPaste.Preferences.desktop': <{'position': <6>}>, 'guvcview.desktop': <{'position': <7>}>, 'htop.desktop': <{'position': <8>}>, 'org.inkscape.Inkscape.desktop': <{'position': <9>}>, 'nvim.desktop': <{'position': <10>}>, 'pcloud.desktop': <{'position': <11>}>, 'com.uploadedlobster.peek.desktop': <{'position': <12>}>, 'remote-viewer.desktop': <{'position': <13>}>, 'screenkey.desktop': <{'position': <14>}>, 'shredder.desktop': <{'position': <15>}>, 'org.gnome.Software.desktop': <{'position': <16>}>, 'org.soundconverter.SoundConverter.desktop': <{'position': <17>}>, 'org.tenacityaudio.Tenacity.desktop': <{'position': <18>}>, 'timeular.desktop': <{'position': <19>}>, 'org.gnome.Tour.desktop': <{'position': <20>}>, 'virt-manager.desktop': <{'position': <21>}>, 'code.desktop': <{'position': <22>}>, 'youtube-music.desktop': <{'position': <23>}>}, {'vlc.desktop': <{'position': <0>}>, 'winbox.desktop': <{'position': <1>}>, 'com.bitwarden.desktop.desktop': <{'position': <2>}>}]
+app-picker-layout=[{'audacious.desktop': <{'position': <0>}>, 'org.gnome.Contacts.desktop': <{'position': <1>}>, 'org.gnome.Weather.desktop': <{'position': <2>}>, 'org.gnome.clocks.desktop': <{'position': <3>}>, 'org.gnome.Maps.desktop': <{'position': <4>}>, 'org.gnome.Calendar.desktop': <{'position': <5>}>, 'org.gnome.Snapshot.desktop': <{'position': <6>}>, 'ca.desrt.dconf-editor.desktop': <{'position': <7>}>, 'org.gnome.Calculator.desktop': <{'position': <8>}>, 'org.gnome.EasyTAG.desktop': <{'position': <9>}>, 'org.gnome.Extensions.desktop': <{'position': <10>}>, 'org.gnome.Settings.desktop': <{'position': <11>}>, 'org.gnome.SystemMonitor.desktop': <{'position': <12>}>, 'org.fedoraproject.MediaWriter.desktop': <{'position': <13>}>, 'org.mozilla.firefox.desktop': <{'position': <14>}>, 'Utilities': <{'position': <15>}>, 'org.fedoraproject.FirewallConfig.desktop': <{'position': <16>}>, 'yelp.desktop': <{'position': <17>}>, 'com.github.tchx84.Flatseal.desktop': <{'position': <18>}>, 'org.gimp.GIMP.desktop': <{'position': <19>}>, 'google-docs.desktop': <{'position': <20>}>, 'google-drive.desktop': <{'position': <21>}>}, {'google-forms.desktop': <{'position': <0>}>, 'google-maps.desktop': <{'position': <1>}>, 'google-sheets.desktop': <{'position': <2>}>, 'google-slides.desktop': <{'position': <3>}>, 'org.gnome.GPaste.Ui.desktop': <{'position': <4>}>, 'org.gnome.GPaste.Preferences.desktop': <{'position': <5>}>, 'guvcview.desktop': <{'position': <6>}>, 'htop.desktop': <{'position': <7>}>, 'org.inkscape.Inkscape.desktop': <{'position': <8>}>, 'nvim.desktop': <{'position': <9>}>, 'pcloud.desktop': <{'position': <10>}>, 'org.gnome.Characters.desktop': <{'position': <11>}>, 'com.uploadedlobster.peek.desktop': <{'position': <12>}>, 'remote-viewer.desktop': <{'position': <13>}>, 'screenkey.desktop': <{'position': <14>}>, 'shredder.desktop': <{'position': <15>}>, 'org.gnome.Software.desktop': <{'position': <16>}>, 'org.soundconverter.SoundConverter.desktop': <{'position': <17>}>, 'org.tenacityaudio.Tenacity.desktop': <{'position': <18>}>, 'early.desktop': <{'position': <19>}>, 'org.gnome.Tour.desktop': <{'position': <20>}>, 'virt-manager.desktop': <{'position': <21>}>, 'google-translate.desktop': <{'position': <22>}>, 'youtube-music.desktop': <{'position': <23>}>}, {'gvim.desktop': <{'position': <0>}>, 'winbox.desktop': <{'position': <1>}>, 'org.gnome.Logs.desktop': <{'position': <2>}>, 'org.videolan.VLC.desktop': <{'position': <3>}>}]
 command-history=['reboot', 'dconf-editor']
+disable-user-extensions=false
 disabled-extensions=['openweather-extension@penguin-teal.github.io', 'apps-menu@gnome-shell-extensions.gcampax.github.com', 'Vitals@CoreCoding.com']
-enabled-extensions=['background-logo@fedorahosted.org', 'bluetooth-quick-connect@bjarosze.gmail.com', 'blur-my-shell@aunetx', 'dash-to-dock@micxgx.gmail.com', 'unredirect@vaina.lt', 'hide-universal-access@akiirui.github.io', 'lockkeys@vaina.lt', 'MaximizeToEmptyWorkspace-extension@kaisersite.de', 'places-menu@gnome-shell-extensions.gcampax.github.com', 'system-monitor-next@paradoxxx.zero.gmail.com', 'scroll-workspaces@gfxmonk.net', 'transparent-window-moving@noobsai.github.com', 'trayIconsReloaded@selfmade.pl', 'unblank@sun.wxg@gmail.com', 'unite@hardpixel.eu', 'windowIsReady_Remover@nunofarruca@gmail.com', 'GPaste@gnome-shell-extensions.gnome.org', 'status-area-horizontal-spacing@mathematical.coffee.gmail.com', 'arrangeWindows@sun.wxg@gmail.com', 'user-theme@gnome-shell-extensions.gcampax.github.com', 'just-perfection-desktop@just-perfection']
-favorite-apps=['nemo.desktop', 'me.proton.Mail.desktop', 'com.bitwarden.desktop.desktop', 'org.telegram.desktop.desktop', 'com.brave.Browser.desktop', 'brave-browser.desktop', 'slack.desktop', 'google-mail.desktop', 'google-calendar.desktop', 'google-meet.desktop', 'terminator.desktop', 'gvim.desktop', 'com.spotify.Client.desktop', 'youtube.desktop']
+enabled-extensions=['background-logo@fedorahosted.org', 'bluetooth-quick-connect@bjarosze.gmail.com', 'blur-my-shell@aunetx', 'unredirect@vaina.lt', 'hide-universal-access@akiirui.github.io', 'lockkeys@vaina.lt', 'MaximizeToEmptyWorkspace-extension@kaisersite.de', 'places-menu@gnome-shell-extensions.gcampax.github.com', 'system-monitor-next@paradoxxx.zero.gmail.com', 'scroll-workspaces@gfxmonk.net', 'transparent-window-moving@noobsai.github.com', 'trayIconsReloaded@selfmade.pl', 'unblank@sun.wxg@gmail.com', 'unite@hardpixel.eu', 'windowIsReady_Remover@nunofarruca@gmail.com', 'GPaste@gnome-shell-extensions.gnome.org', 'status-area-horizontal-spacing@mathematical.coffee.gmail.com', 'arrangeWindows@sun.wxg@gmail.com', 'user-theme@gnome-shell-extensions.gcampax.github.com', 'just-perfection-desktop@just-perfection', 'dash-to-dock@micxgx.gmail.com']
+favorite-apps=['nemo.desktop', 'me.proton.Mail.desktop', 'com.bitwarden.desktop.desktop', 'org.telegram.desktop.desktop', 'brave-origin.desktop', 'brave-browser.desktop', 'slack.desktop', 'google-mail.desktop', 'google-calendar.desktop', 'google-meet.desktop', 'terminator.desktop', 'cursor.desktop', 'com.spotify.Client.desktop', 'youtube.desktop']
 last-selected-power-profile='power-saver'
 remember-mount-password=false
 welcome-dialog-last-shown-version='47.4'
@@ -21,23 +22,20 @@ blur-panel=false
 dash-opacity=0.12
 hacks-level=0
 hidetopbar=false
-settings-version=2
+pipelines={'pipeline_default': {'name': <'Default'>, 'effects': <[<{'type': <'dual_kawase_blur'>, 'id': <'effect_000000000000'>, 'params': <{'unscaled_radius': <30>, 'brightness': <0.59999999999999998>}>}>]>}, 'pipeline_migrated_dynamic_blur': {'name': <'Migrated dynamic blur'>, 'effects': <[<{'type': <'dual_kawase_blur'>, 'id': <'effect_migrated_dynamic_blur'>, 'params': <{'unscaled_radius': <20>, 'brightness': <0.66000000000000003>}>}>]>}, 'pipeline_liquid_glass': {'name': <'Liquid Glass'>, 'effects': <[<{'type': <'luminosity'>, 'id': <'effect_liquid_glass_luminosity'>, 'params': <{'saturation_multiplicator': <1.1000000000000001>}>}>, <{'type': <'refraction'>, 'id': <'effect_liquid_glass_refraction'>, 'params': <{'tint': <0>}>}>, <{'type': <'noise'>, 'id': <'effect_liquid_glass_noise'>, 'params': <{'noise': <0.10000000000000001>}>}>]>}, 'pipeline_vapor_glass': {'name': <'Vapor Glass'>, 'effects': <[<{'type': <'luminosity'>, 'id': <'effect_vapor_glass_luminosity'>, 'params': <{'saturation_multiplicator': <1.1000000000000001>}>}>, <{'type': <'wave'>, 'id': <'effect_vapor_glass_wave'>, 'params': <@a{sv} {}>}>, <{'type': <'refraction'>, 'id': <'effect_vapor_glass_refraction'>, 'params': <{'tint': <0>}>}>, <{'type': <'noise'>, 'id': <'effect_vapor_glass_noise'>, 'params': <{'noise': <0.10000000000000001>}>}>]>}, 'pipeline_classic_light_background': {'name': <'Classic Light Background'>, 'effects': <[<{'type': <'dual_kawase_blur'>, 'id': <'effect_classic_light_blur'>, 'params': <{'unscaled_radius': <30>, 'brightness': <0.59999999999999998>}>}>, <{'type': <'color'>, 'id': <'effect_classic_light_color'>, 'params': <{'color': <(1.0, 1.0, 1.0, 0.25)>, 'blend_mode': <17>}>}>]>}, 'pipeline_classic_dark_background': {'name': <'Classic Dark Background'>, 'effects': <[<{'type': <'dual_kawase_blur'>, 'id': <'effect_classic_dark_blur'>, 'params': <{'unscaled_radius': <30>, 'brightness': <0.59999999999999998>}>}>, <{'type': <'color'>, 'id': <'effect_classic_dark_color'>, 'params': <{'color': <(0.40000000000000002, 0.40000000000000002, 0.40000000000000002, 0.34999999999999998)>, 'blend_mode': <17>}>}>]>}}
+rounded-blur-found=false
+settings-version=8
 
 [extensions/blur-my-shell/appfolder]
-brightness=0.66000000000000003
-sigma=10
+pipeline='pipeline_migrated_dynamic_blur'
 style-dialogs=3
 
 [extensions/blur-my-shell/applications]
 blur=false
 blur-on-overview=true
-brightness=0.66000000000000003
-sigma=10
 
 [extensions/blur-my-shell/dash-to-dock]
 blur=true
-brightness=0.66000000000000003
-sigma=10
 static-blur=true
 style-dash-to-dock=0
 
@@ -50,16 +48,12 @@ style-components=2
 
 [extensions/blur-my-shell/panel]
 blur=true
-brightness=0.66000000000000003
 override-background-dynamically=false
-sigma=10
 style-panel=0
 unblur-in-overview=true
 
 [extensions/blur-my-shell/window-list]
 blur=false
-brightness=0.66000000000000003
-sigma=10
 
 [extensions/caffeine]
 indicator-position-max=3
@@ -105,7 +99,7 @@ middle-click-action='minimize'
 min-alpha=0.33000000000000002
 multi-monitor=false
 preferred-monitor=-2
-preferred-monitor-by-connector='DP-2'
+preferred-monitor-by-connector='DP-3'
 pressure-threshold=200.0
 preview-size-scale=0.5
 require-pressure-to-show=true
@@ -297,6 +291,7 @@ memory-refresh-time=3000
 memory-show-menu=true
 memory-show-text=false
 memory-style='graph'
+monitors=['{"uuid":"b36b07a55d97aebcd7ee70116a365bce","type":"cpu","device":"all","display":true,"style":"graph","graph-width":70,"refresh-time":1500,"show-text":false,"show-menu":true,"colors":{"user":"#0072b3","system":"#0092e6","nice":"#00a3ff","iowait":"#002f3d","other":"#001d26"}}', '{"uuid":"0587ceaab66a0988833aa1226a365bce","type":"freq","device":"all","display":false,"style":"graph","graph-width":80,"refresh-time":2000,"show-text":false,"show-menu":false,"colors":{"freq":"#001d26"},"display-mode":"max"}', '{"uuid":"a28802b08b7cb9dbe936c7dc6a365bce","type":"memory","device":"default","display":true,"style":"graph","graph-width":70,"refresh-time":3000,"show-text":false,"show-menu":true,"colors":{"program":"#00b35b","buffer":"#00ff82","cache":"#aaf5d0"}}', '{"uuid":"76e7444671d5ebd48e2d50896a365bce","type":"swap","device":"default","display":false,"style":"graph","graph-width":80,"refresh-time":5000,"show-text":false,"show-menu":true,"colors":{"used":"#8b00c3"}}', '{"uuid":"83f1fb757f08e949b5357fac6a365bce","type":"disk","device":"all","display":true,"style":"graph","graph-width":70,"refresh-time":3000,"show-text":false,"show-menu":true,"colors":{"read":"#c65000","write":"#ff6700"}}', '{"uuid":"ea5e84c3562bf1411ee0c52f6a365bce","type":"net","device":"all","display":true,"style":"graph","graph-width":70,"refresh-time":3000,"show-text":false,"show-menu":true,"colors":{"down":"#fce94f","downerrors":"#ff6e00","up":"#fb74fb","uperrors":"#e0006e","collisions":"#ff0000"},"speed-in-bits":false}', '{"uuid":"d66fea280b44addc185eb7c26a365bce","type":"gpu","device":"0","display":false,"style":"graph","graph-width":80,"refresh-time":2000,"show-text":false,"show-menu":false,"colors":{"used":"#00b35b","memory":"#00ff82"}}', '{"uuid":"3c3b9e6be9f11094b4ff6b276a365bce","type":"thermal","device":"asusec - CPU","display":true,"style":"digit","graph-width":60,"refresh-time":3000,"show-text":false,"show-menu":false,"colors":{"tz0":"#f2002eff"},"fahrenheit-unit":false,"threshold":75}', '{"uuid":"b7696b35d424a18c7eb983966a365bce","type":"fan","device":"thinkpad - 1","display":false,"style":"digit","graph-width":80,"refresh-time":2000,"show-text":false,"show-menu":true,"colors":{"fan0":"#f2002e"}}', '{"uuid":"c4c11b07d22915d12cb154dd6a365bce","type":"battery","device":"default","display":false,"style":"digit","graph-width":80,"refresh-time":5000,"show-text":true,"show-menu":false,"colors":{"batt0":"#f2002e"},"time":false,"hidesystem":false}']
 move-clock=false
 net-collisions-color='#ff0000'
 net-display=true
@@ -312,7 +307,7 @@ net-style='graph'
 net-up-color='#fb74fb'
 net-uperrors-color='#e0006e'
 rotate-labels=false
-settings-schema-version=1
+settings-schema-version=2
 show-tooltip=false
 swap-display=false
 swap-graph-width=80
@@ -410,4 +405,4 @@ app-icon-mode='app-icon-only'
 current-workspace-only=false
 
 [world-clocks]
-locations=[<(uint32 2, <('Boston', 'KBOS', true, [(0.73933117517543911, -1.2393680058718144)], [(0.73929408692883414, -1.2402270045697685)])>)>, <(uint32 2, <('San Francisco', 'KOAK', true, [(0.65832848982162007, -2.133408063190589)], [(0.659296885757089, -2.1366218601153339)])>)>, <(uint32 2, <('Beijing', 'ZBAA', true, [(0.69696814214530467, 2.0295270260429752)], [(0.69689057971334611, 2.0313596217575696)])>)>, <(uint32 2, <('Rio de Janeiro', 'SBRJ', true, [(-0.39968039870670141, -0.75340046626198298)], [(-0.39968039870670141, -0.75456400746111763)])>)>, <(uint32 2, <('Pune', 'VAPO', true, [(0.32019112325387172, 1.2837088634636014)], [(0.32340951039454929, 1.2889256525978121)])>)>]
+locations=[<(uint32 2, <('Boston', 'KBOS', true, [(0.73933117517543911, -1.2393680058718144)], [(0.73929408692883414, -1.2402270045697685)])>)>, <(uint32 2, <('San Francisco', 'KOAK', false, [(0.65832848982162007, -2.133408063190589)], [(0.65832848982162007, -2.133408063190589)])>)>, <(uint32 2, <('Beijing', 'ZBAA', true, [(0.69696814214530467, 2.0295270260429752)], [(0.69689057971334611, 2.0313596217575696)])>)>, <(uint32 2, <('Rio de Janeiro', 'SBRJ', true, [(-0.39968039870670141, -0.75340046626198298)], [(-0.39968039870670141, -0.75456400746111763)])>)>, <(uint32 2, <('Pune', 'VAPO', true, [(0.32019112325387172, 1.2837088634636014)], [(0.32340951039454929, 1.2889256525978121)])>)>, <(uint32 2, <('Brno', 'LKTB', true, [(0.857829327355213, 0.291469985083053)], [(0.85870199198121022, 0.29030642643062599)])>)>]

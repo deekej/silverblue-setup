@@ -2,9 +2,16 @@
 selected-color=(true, 0.23921568691730499, 0.21960784494876862, 0.27450981736183167, 1.0)
 
 [gtk4/settings/file-chooser]
-show-hidden=false
+date-format='regular'
+location-mode='path-bar'
+show-hidden=true
+sidebar-width=140
+sort-column='name'
 sort-directories-first=true
+sort-order='ascending'
 type-format='mime'
+view-type='list'
+window-size=(955, 326)
 
 [settings/file-chooser]
 date-format='regular'
@@ -17,5 +24,5 @@ sort-column='name'
 sort-directories-first=true
 sort-order='ascending'
 type-format='mime'
-window-position=(223, 48)
+window-position=(23, 21)
 window-size=(1475, 990)
