@@ -1,41 +1,21 @@
 ---
 # vim: filetype=yaml.ansible
 # --------------------------
-# Configuration (variables) for Normandy-SR3 [Desktop]
+# Configuration (variables) for Normandy-SR3 [Laptop]
 
 hostname_FQDN:  Normandy-SR3.deekej.io
 
 kickstart_network_hostname: Normandy-SR3.deekej.io
 kickstart_network_devices:
-  - enp5s0
+  - enp0s31f6         # Ethernet
+  - wlp0s20f3         # WiFi
 
 # NOTE: The disk id needs to be manually specified before every installation!!
-kickstart_disk_id: ata-WDC_WDS100T1R0A-68A4W0_25201Q801240
-
-# This forces the usage of XFS for /boot partition (to support dual boot):
-kickstart_multiboot: true
+kickstart_disk_id: nvme-SAMSUNG_MZVLB256HBHQ-000L7_S4ELNF1N330875
 
 # ---| Partitions Configuration |----------------------------------------------
-multiboot:          true
-NTFS_mounts:        false
-
-boot_entries:
-  - name:           Windows 11 (LTSC)
-    EFI_UUID:       2400-112A
-
-  - name:           Windows 10 (LTSC)
-    EFI_UUID:       2A5C-74A6
-
-#NTFS_mount_points:
-#  - device:       /dev/sda1
-#    mount_point:  /mnt/Downloads
-#
-#  - device:       /dev/sdb2
-#    mount_point:  /mnt/Storage
-#
-#  - device:       /dev/sdc1
-#    mount_point:  /mnt/Scratch
+NTFS_mounts:  false
 
 # ---| System configuration |--------------------------------------------------
-laptop_config:        false
+laptop_config:        true
 redhat_work_config:   true
