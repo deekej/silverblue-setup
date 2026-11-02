@@ -12,7 +12,7 @@ kickstart_network_devices:
   - eth0              # Docking Station
 
 # NOTE: The disk id needs to be manually specified before every installation!!
-kickstart_disk_id: nvme-SAMSUNG_MZVLB256HBHQ-000L7_S4ELNF1N330875
+kickstart_disk_id: nvme-SanDisk_SSD_Plus_500GB_A3N_25104X802760
 
 # ---| Partitions Configuration |----------------------------------------------
 NTFS_mounts:  false
