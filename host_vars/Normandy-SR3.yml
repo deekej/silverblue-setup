@@ -9,6 +9,7 @@ kickstart_network_hostname: Normandy-SR3.deekej.io
 kickstart_network_devices:
   - enp0s31f6         # Ethernet
   - wlp0s20f3         # WiFi
+  - eth0              # Docking Station
 
 # NOTE: The disk id needs to be manually specified before every installation!!
 kickstart_disk_id: nvme-SAMSUNG_MZVLB256HBHQ-000L7_S4ELNF1N330875
