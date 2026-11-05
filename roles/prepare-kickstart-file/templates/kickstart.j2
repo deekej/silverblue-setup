@@ -11,6 +11,17 @@
 # Use graphical install:
 graphical
 
+# System language:
+lang {{ kickstart_system_language }}
+
+# Keyboard layout:
+keyboard --vckeymap={{ kickstart_keyboard_layout }} --xlayouts='{{ kickstart_keyboard_layout }}' --switch='grp:win_space_toggle'
+
+# OSTree (Silverblue) installation flavorpassword_policies:
+ostreesetup --osname=fedora --remote=fedora --url='file:///ostree/repo' --ref="fedora/{{ kickstart_fedora_version }}/{{ kickstart_fedora_arch }}/silverblue" --nogpg
+
+# ---| DISK Configuration |----------------------------------------------------
+
 # Ignore any other system drives - so we don't accidentally delete them:
 ignoredisk --only-use=/dev/disk/by-id/{{ kickstart_disk_id }}
 
@@ -28,7 +39,7 @@ part  btrfs.boot      --fstype=btrfs    --ondisk=/dev/disk/by-id/{{ kickstart_di
 btrfs /boot           --label=boot --data=single btrfs.boot
 {% endif %}
 
-part btrfs.silverblue --fstype=btrfs    --ondisk=/dev/disk/by-id/{{ kickstart_disk_id }} --size=225280 --grow --fsoptions='compress=zstd:1,noatime' --encrypted --luks-version=luks2
+part btrfs.silverblue --fstype=btrfs    --ondisk=/dev/disk/by-id/{{ kickstart_disk_id }} --size=225280 --grow --fsoptions='compress=zstd:1,noatime' --encrypted --luks-version=luks2 --passphrase=initial-setup # notsecret
 
 btrfs none            --label=fedora --data=single btrfs.silverblue
 btrfs /                   --subvol LABEL=fedora --name=@
@@ -42,25 +53,20 @@ btrfs /var/home           --subvol LABEL=fedora --name=var.home
 btrfs {{ subvolume.path }} --subvol LABEL=fedora --name={{ subvolume.name }}
 {% endfor %}
 
-# OSTree (Silverblue) installation flavor:
-ostreesetup --osname=fedora --remote=fedora --url='file:///ostree/repo' --ref="fedora/{{ kickstart_fedora_version }}/{{ kickstart_fedora_arch }}/silverblue" --nogpg
+# ---| SYSTEM Configuration |--------------------------------------------------
 
-# System language:
-lang {{ kickstart_system_language }}
-
-# Keyboard layout:
-keyboard --vckeymap={{ kickstart_keyboard_layout }} --xlayouts='{{ kickstart_keyboard_layout }}' --switch='grp:win_space_toggle'
+# Network & firewall configuration:
+firewall --use-system-defaults
+network  --hostname={{ kickstart_network_hostname }}
+{% for device in kickstart_network_devices %}
+network  --bootproto=dhcp --device={{ device }} --ipv6=auto --activate
+{% endfor %}
 
 # System time & timezone configuration:
 timezone {{ kickstart_time_zone }} --utc
 timesource --ntp-pool={{ kickstart_time_server }}{{ (kickstart_time_nts|bool) | ternary(' --nts', '') }}
 
-# Network & firewall configuration:
-{% for device in kickstart_network_devices %}
-network  --bootproto=dhcp --device={{ device }} --ipv6=auto --activate
-{% endfor %}
-network  --hostname={{ kickstart_network_hostname }}
-firewall --use-system-defaults
+# ---| USER Configuration |----------------------------------------------------
 
 # Create necessary groups / users for a follow-up setup:
 group --name=setup --gid=1001
@@ -84,10 +90,85 @@ services --disabled={{ kickstart_services_disabled | join(',') }}
 services --enabled={{ kickstart_services_enabled | join(',') }}
 
 # Commands to run after the installation has finished:
-%post --erroronfail
+%post --erroronfail --interpreter=/bin/bash --log=/root/ks-post.log
 cp /etc/skel/.bash* /root
 echo "TODO" > /etc/.initial-setup
 fstrim -v --all --quiet-unsupported
+
+systemctl enable sshd
+systemctl disable NetworkManager-wait-online
+
+cat << 'EOF' > /etc/luks-rotate.sh
+#!/bin/bash
+set -e
+
+exec < /dev/tty1 > /dev/tty1 2>&1
+chvt 1
+clear
+
+UUID="$(grep -E -i -o '[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}' /etc/crypttab | head -n1)"
+DEV="/dev/disk/by-uuid/$UUID"
+
+[ -b "$DEV" ] || { echo "Error: $DEV not found" >&2; exit 1; }
+
+echo -n "initial-setup" > /run/bootstrap.key
+chmod 600 /run/bootstrap.key
+
+while true; do
+    echo "======================================"
+    echo "    SETUP Permanent LUKS Passphrase   "
+    echo "======================================"
+
+    read -r -s -p "Enter new LUKS passphrase: " PASS1
+    echo
+    read -r -s -p "Repeat new LUKS passphrase: " PASS2
+    echo
+    [ -n "$PASS1" ] && [ "$PASS1" = "$PASS2" ] && break
+
+    echo "Passphrases empty or do not match. Try again..."
+    clear
+    sleep 3
+done
+
+printf '%s' "$PASS1" | cryptsetup luksAddKey "$DEV" --key-file /run/bootstrap.key -
+cryptsetup luksRemoveKey "$DEV" --key-file /run/bootstrap.key
+shred -u /run/bootstrap.key
+unset PASS1 PASS2
+
+systemctl disable luks-firstboot.service
+rm -f /etc/systemd/system/luks-firstboot.service /etc/luks-rotate.sh
+systemctl daemon-reload
+echo "LUKS setup complete. Boot resuming..."
+EOF
+
+chmod 700 /etc/luks-rotate.sh
+
+cat << 'EOF' > /etc/systemd/system/luks-firstboot.service
+[Unit]
+Description=Rotate LUKS Bootstrap Key
+After=systemd-vconsole-setup.service
+Before=systemd-user-sessions.service getty.target
+ConditionPathExists=/etc/luks-rotate.sh
+
+[Service]
+Type=oneshot
+RemainAfterExit=no
+TimeoutStartSec=0
+StandardInput=tty-force
+StandardOutput=tty
+StandardError=tty
+TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
+TTYVTDisallocate=yes
+ExecStartPre=-/usr/bin/plymouth quit
+ExecStart=/etc/luks-rotate.sh
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable luks-firstboot.service
 %end
 
 # Reboot after successful installation - so we can continue with the configuration via Ansible:
