@@ -10,7 +10,7 @@ kickstart_network_devices:
   - enp5s0
 
 # NOTE: The disk id needs to be manually specified before every installation!!
-kickstart_disk_id: ata-WDC_WDS100T1R0A-68A4W0_25201Q801240
+kickstart_disk_id: nvme-Viper_M.2_VPN100_038507051F5D03570715
 
 # This forces the usage of XFS for /boot partition (to support dual boot):
 kickstart_multiboot: true
