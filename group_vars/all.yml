@@ -219,8 +219,8 @@ home_subfolders:
 repos_to_enable:
   - fedora-steam.repo
 
-repos_to_disable:
-  - '_copr:copr.fedorainfracloud.org:phracek:PyCharm.repo'
+#repos_to_disable:
+#  - '_copr:copr.fedorainfracloud.org:phracek:PyCharm.repo'
 
 base_packages_to_remove:
   - ptyxis
