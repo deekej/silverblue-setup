@@ -6,7 +6,7 @@
 tmpfs_size:         12G
 btrfs_mount_point:  /mnt/btrfs
 
-dualboot: false
+multiboot: false
 
 btrfs_subvolumes:
   - "{{ username }}"
