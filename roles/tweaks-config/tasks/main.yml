@@ -126,9 +126,9 @@
         - vundle_plugins_install.user|bool
 
 # ---| Final configuration |---------------------------------------------------
-- name: Ensure root's ownership of /var/home/{{ username }}/.snapshots
+- name: Ensure root's ownership of /home/{{ username }}/.snapshots
   file:
-    path:   /var/home/{{ username }}/.snapshots
+    path:   /home/{{ username }}/.snapshots
     state:  directory
     owner:  root
     group:  root

@@ -6,17 +6,17 @@
 # Flatpak apps are restored by replacing their configuration stored in
 # ~/.var/app/app-name/config folders
 
-- name: PROGRESS INFO
-  debug:
-    msg: |-
-      Waiting for user {{ displayed_name }} to manually login into Gnome Shell...
-
-- name: Waiting for user {{ displayed_name }} to login into Gnome Shell
-  wait_for:
-    path:       /run/user/{{ user_id }}/bus
-    state:      present
-    sleep:      "{{ unlock_sleep }}"
-    timeout:    "{{ unlock_timeout }}"
+#- name: PROGRESS INFO
+#  debug:
+#    msg: |-
+#      Waiting for user {{ displayed_name }} to manually login into Gnome Shell...
+#
+#- name: Waiting for user {{ displayed_name }} to login into Gnome Shell
+#  wait_for:
+#    path:       /run/user/{{ user_id }}/bus
+#    state:      present
+#    sleep:      "{{ unlock_sleep }}"
+#    timeout:    "{{ unlock_timeout }}"
 
 - name: Create a 'dconf' temporary folder in tmp/
   file:
@@ -101,7 +101,7 @@
 
 - name: Ensure the destination folders for Flatpak configs exist
   file:
-    path:       "{{ '/var/home/' ~ username ~ '/.var/app/' ~ app_name }}"
+    path:       "{{ '/home/' ~ username ~ '/.var/app/' ~ app_name }}"
     state:      directory
     owner:      "{{ username }}"
     group:      "{{ username }}"
@@ -114,7 +114,7 @@
 - name: Extract the Flatpak config archives to their locations
   unarchive:
     src:        "{{ '/tmp/flatpak-configs/' ~ config ~ '.tar.xz' }}"
-    dest:       "{{ '/var/home/' ~ username ~ '/.var/app/' ~ config }}"
+    dest:       "{{ '/home/' ~ username ~ '/.var/app/' ~ config }}"
     owner:      "{{ username }}"
     group:      "{{ username }}"
     remote_src: true

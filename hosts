@@ -14,7 +14,8 @@ all:
       ansible_host:           192.168.42.33
 
     Normandy-SRX:
-      ansible_host:           192.168.42.36
+      ansible_host:           localhost
+      ansible_connection:     local
 
   # Global options for all the hosts (overriden by host-specific variables):
   vars:

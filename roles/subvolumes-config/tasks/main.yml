@@ -12,10 +12,10 @@
 
 - name: Set the 'mount_points' variables
   set_fact:
-    luks_part:        "{{ mount.ansible_facts.mount_points['/var/home'].device }}"
+    luks_part:        "{{ mount.ansible_facts.mount_points['/home'].device }}"
     efi_part_UUID:    "{{ mount.ansible_facts.mount_points['/boot/efi'].uuid }}"
     boot_part_UUID:   "{{ mount.ansible_facts.mount_points['/boot'].uuid }}"
-    btrfs_part_UUID:  "{{ mount.ansible_facts.mount_points['/var/home'].uuid }}"
+    btrfs_part_UUID:  "{{ mount.ansible_facts.mount_points['/home'].uuid }}"
 
 # Make sure we do not end up with unbootable machine:
 - name: Check the obtained mount points
@@ -133,14 +133,3 @@
     - name: Update systemd units generated from /etc/fstab
       systemd_service:
         daemon-reload: true
-
-    - name: REBOOT INFO
-      debug:
-        msg: |-
-          Rebooting the machine... Please, unlock the device during the next boot!
-
-    - name: Reboot the machine for the changes to take effect
-      reboot:
-        pre_reboot_delay:   "{{ pre_reboot_delay }}"
-        reboot_timeout:     "{{ reboot_timeout }}"
-        post_reboot_delay:  "{{ post_reboot_delay }}"

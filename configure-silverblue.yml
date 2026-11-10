@@ -4,6 +4,7 @@
 
 - name: Configure a (freshly installed) Fedora Silverblue machine
   hosts: "{{ host }}"
+  become: true
 
   pre_tasks:
     - name: Ensure we use the correct hostname
@@ -33,7 +34,7 @@
 
     - name: Set the 'initial_setup' variable accordingly
       set_fact:
-        initial_setup: "{{ (initial_setup_check.found|bool) | ternary(false, true) }}"
+        initial_setup: false
 
     - name: Initialize the remote_tmp [~/.ansible/tmp] folder // root
       file:
@@ -46,7 +47,7 @@
 
     - name: Initialize the remote_tmp [~/.ansible/tmp] folder // user
       file:
-        path:     "/var/home/{{ (initial_setup|bool) | ternary('setup', username) }}/.ansible/tmp"
+        path:     "/home/{{ (initial_setup|bool) | ternary('setup', username) }}/.ansible/tmp"
         state:    directory
         recurse:  true
         owner:    "{{ (initial_setup|bool) | ternary('setup', username) }}"
@@ -113,16 +114,15 @@
   # ---------------------------------------------------------------------------
 
   roles:
-    #- tpm-config # TODO
-    - dnf-config
-    - layered-packages
-    - users-config
+    #- dnf-config
+    #- layered-packages
+    #- users-config
     - subvolumes-config
-    - multiboot-config
+    #- multiboot-config
     - system-config
     - tweaks-config
     - flatpak-packages
-    - extract-user-files
+    #- extract-user-files
     - apps-config
 
   # ---------------------------------------------------------------------------

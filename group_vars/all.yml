@@ -13,9 +13,9 @@ unlock_timeout:     1800
 unlock_sleep:       5
 
 # ---| Default User Configuration |--------------------------------------------
-displayed_name: Dee'Kej
+displayed_name: David Kaferad
 username:       deekej
-homedir:        /var/home/{{ username }}
+homedir:        /home/{{ username }}
 
 user_id:        117813
 group_id:       117813
@@ -31,7 +31,7 @@ user_password_plain:  !vault |
   3265373339383832396432613239663931383131346666320a653261356431643732396537373936
   64366334356338396132396166666433363266326433343064623935306630373331306264383065
   6534356337663735380a346164613838363332663937376463623833303161363061346138666634
-  3538
+
 
 root_login_shell:     /bin/zsh
 root_password_plain:  !vault |
@@ -71,43 +71,40 @@ kickstart_services_enabled:
 
 # ---| Partitions Configuration |----------------------------------------------
 kickstart_subvolumes:
-  - path: "/var/home/{{ username }}"
+  - path: "/home/{{ username }}"
     name: "{{ username }}"
 
-  - path: "/var/home/{{ username }}/.backups"
+  - path: "/home/{{ username }}/.backups"
     name: "{{ username }}.backups"
 
-  - path: "/var/home/{{ username }}/.cache"
+  - path: "/home/{{ username }}/.cache"
     name: "{{ username }}.cache"
 
-  - path: "/var/home/{{ username }}/.local/share/containers"
+  - path: "/home/{{ username }}/.local/share/containers"
     name: "{{ username }}.containers"
 
-  - path: "/var/home/{{ username }}/.var"
+  - path: "/home/{{ username }}/.var"
     name: "{{ username }}.var"
 
-  - path: "/var/home/{{ username }}/build"
+  - path: "/home/{{ username }}/build"
     name: "{{ username }}.build"
 
-  - path: "/var/home/{{ username }}/devel"
+  - path: "/home/{{ username }}/devel"
     name: "{{ username }}.devel"
 
-  - path: "/var/home/{{ username }}/Documents"
+  - path: "/home/{{ username }}/Documents"
     name: "{{ username }}.documents"
 
-  - path: "/var/home/{{ username }}/Downloads"
+  - path: "/home/{{ username }}/Downloads"
     name: "{{ username }}.downloads"
 
-  - path: "/var/home/{{ username }}/Dropbox"
-    name: "{{ username }}.dropbox"
-
-  - path: "/var/home/{{ username }}/Music"
+  - path: "/home/{{ username }}/Music"
     name: "{{ username }}.music"
 
-  - path: "/var/home/{{ username }}/Pictures"
+  - path: "/home/{{ username }}/Pictures"
     name: "{{ username }}.pictures"
 
-  - path: "/var/home/{{ username }}/Videos"
+  - path: "/home/{{ username }}/Videos"
     name: "{{ username }}.videos"
 
 tmpfs_size: 24G
@@ -199,9 +196,6 @@ home_subfolders:
   - path: Downloads
     mode: '0755'
 
-  - path: Dropbox
-    mode: '0755'
-
   - path: Music
     mode: '0755'
 
@@ -216,8 +210,8 @@ home_subfolders:
     mode: '0755'
 
 # ---| Layered packages configuration |----------------------------------------
-repos_to_enable:
-  - fedora-steam.repo
+#repos_to_enable:
+#  - fedora-steam.repo
 
 #repos_to_disable:
 #  - '_copr:copr.fedorainfracloud.org:phracek:PyCharm.repo'
@@ -258,7 +252,6 @@ packages_extra_utilities:
   - autojump-zsh
   - cowsay
   - ctags
-  - cursor
   - dos2unix
   - fortune-mod
   - fzf
@@ -284,15 +277,7 @@ flatpak_packages_to_remove:
 #       (most likely) need to specify which branch to use - after the slashes: //
 flatpak_packages_extra_user:
   - com.bitwarden.desktop                 # Bitwarden Desktop App
-  - com.brave.Browser                     # Brave Browser for personal stuff
   - com.spotify.Client                    # Music Streamer
-  - me.proton.Mail                        # Proton Mail / Calendar Desktop App
-  - org.gnome.EasyTAG                     # ID3 editor for MP3
-  - org.gimp.GIMP                         # Graphical Editor
-  - org.inkscape.Inkscape                 # Vector Editor
-  - org.soundconverter.SoundConverter     # Sound Converter
-  - org.telegram.desktop                  # Instant Messaging App
-  - org.tenacityaudio.Tenacity            # FOSS replacement of Audacity
 
 flatpak_packages_extra_work: []
 
@@ -305,8 +290,8 @@ flatpak_packages_extra_codecs:
   - org.freedesktop.Platform.ffmpeg-full/x86_64/24.08
   - org.freedesktop.Platform.openh264/x86_64/2.5.1
 
-flatpak_packages_extra_runtimes:
-  - org.telegram.desktop.webview
+#flatpak_packages_extra_runtimes:
+#  - org.telegram.desktop.webview
 
 flatpak_custom_icons:       true
 flatpak_custom_icons_theme: Flat-Remix-Violet-Dark
@@ -315,8 +300,8 @@ flatpak_custom_gtk_themes:  true
 flatpak_custom_gtk_theme:   Flat-Remix-GTK-Violet-Dark
 
 # ---| System configuration |--------------------------------------------------
-etckeeper_git_name:   Dee'Kej
-etckeeper_git_email:  admin@deekej.io
+etckeeper_git_name:   David Kaferad
+etckeeper_git_email:  deekej@redhat.com
 
 passwordless_sudo:    true
 
@@ -341,26 +326,24 @@ tweaks_repos:
 
   user:
     - repo:             git@github.com:deekej/home.dir.git
-      dest:             /var/home/deekej
+      dest:             /home/deekej
 
     - repo:             git@github.com:deekej/bash.config.git
-      dest:             /var/home/deekej/.bash
+      dest:             /home/deekej/.bash
 
     - repo:             git@github.com:deekej/zsh.config.git
-      dest:             /var/home/deekej/.zsh
+      dest:             /home/deekej/.zsh
 
     - repo:             git@github.com:deekej/ssh.config.git
-      dest:             /var/home/deekej/.ssh
+      dest:             /home/deekej/.ssh
 
     - repo:             git@github.com:deekej/git.config.git
-      dest:             /var/home/deekej/.config/git
+      dest:             /home/deekej/.config/git
 
     - repo:             git@github.com:deekej/vim-ultimate-IDE.git
-      dest:             /var/home/deekej/.vim
+      dest:             /home/deekej/.vim
 
 usr_local_binaries:
-  - pcloud
-  - timeular
   - winbox
 
 # NOTE: This will reset the files / folders attributes after their contents
@@ -398,50 +381,50 @@ files_attributes:
 
   user:
     # ---| folders |------------------------------------------------------------
-    - path: /var/home/{{ username }}/.config
+    - path: /home/{{ username }}/.config
       mode: '0700'
 
-    - path: /var/home/{{ username }}/.local
+    - path: /home/{{ username }}/.local
       mode: '0700'
 
-    - path: /var/home/{{ username }}/.ssh
+    - path: /home/{{ username }}/.ssh
       mode: '0700'
 
-    - path: /var/home/{{ username }}/.ssh/.git
+    - path: /home/{{ username }}/.ssh/.git
       mode: '0700'
 
-    - path: /var/home/{{ username }}/.ssh/public-keys
+    - path: /home/{{ username }}/.ssh/public-keys
       mode: '0700'
 
     # ---| files |-------------------------------------------------------------
-    - path: /var/home/{{ username }}/.ssh/.gitignore
+    - path: /home/{{ username }}/.ssh/.gitignore
       mode: '0600'
 
-    - path: /var/home/{{ username }}/.ssh/.post-checkout.hook
+    - path: /home/{{ username }}/.ssh/.post-checkout.hook
       mode: '0600'
 
-    - path: /var/home/{{ username }}/.ssh/public-keys/admin.pub
+    - path: /home/{{ username }}/.ssh/public-keys/admin.pub
       mode: '0600'
 
-    - path: /var/home/{{ username }}/.ssh/public-keys/devel.pub
+    - path: /home/{{ username }}/.ssh/public-keys/devel.pub
       mode: '0600'
 
-    - path: /var/home/{{ username }}/.ssh/public-keys/fedora.pub
+    - path: /home/{{ username }}/.ssh/public-keys/fedora.pub
       mode: '0600'
 
-    - path: /var/home/{{ username }}/.ssh/public-keys/redhat.pub
+    - path: /home/{{ username }}/.ssh/public-keys/redhat.pub
       mode: '0600'
 
-    - path: /var/home/{{ username }}/.ssh/public-keys/.gitkeep
+    - path: /home/{{ username }}/.ssh/public-keys/.gitkeep
       mode: '0600'
 
-    - path: /var/home/{{ username }}/.ssh/README.md
+    - path: /home/{{ username }}/.ssh/README.md
       mode: '0600'
 
-    - path: /var/home/{{ username }}/.ssh/authorized_keys
+    - path: /home/{{ username }}/.ssh/authorized_keys
       mode: '0600'
 
-    - path: /var/home/{{ username }}/.ssh/config
+    - path: /home/{{ username }}/.ssh/config
       mode: '0600'
 
 vundle_plugins_install:

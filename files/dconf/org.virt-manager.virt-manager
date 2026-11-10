@@ -25,14 +25,14 @@ show-toolbar=true
 graphics-type='system'
 
 [paths]
-image-default='/var/home/deekej/Downloads'
+image-default='/home/deekej/Downloads'
 
 [stats]
 enable-disk-poll=true
 enable-memory-poll=true
 
 [urls]
-isos=['/var/home/deekej/Downloads/bazzite-gnome-stable-live-amd64.iso', '/var/home/deekej/Downloads/bazzite-gnome-stable-amd64.iso', '/var/home/deekej/Downloads/Fedora-Workstation-Live-x86_64-41-1.4.iso', '/var/home/deekej/Downloads/Fedora-Workstation-Live-43-1.6.x86_64.iso', '/var/home/deekej/Downloads/Fedora-Silverblue-ostree-x86_64-43-1.6.iso', '/var/home/deekej/Downloads/Win10_22H2_English_x64v1.iso']
+isos=[]
 
 [vmlist-fields]
 disk-usage=false

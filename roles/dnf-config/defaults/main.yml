@@ -3,9 +3,7 @@
 
 repos:
   - brave-browser.repo
-  - cursor.repo
   - fedora-rar.repo
-  - fedora-steam.repo
   - rpmfusion-free-updates-testing.repo
   - rpmfusion-free-updates.repo
   - rpmfusion-free.repo
@@ -21,7 +19,6 @@ repos_to_disable: []
 
 repos_gpg_keys:
   - RPM-GPG-KEY-brave
-  - RPM-GPG-KEY-cursor
   - RPM-GPG-KEY-slaanesh
   - RPM-GPG-KEY-slack
   - RPM-GPG-KEY-copr-kdocker

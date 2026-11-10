@@ -144,7 +144,7 @@
 # -----------------------------------------------------------------------------
 
 - name: "Initialize Snapper for {{ username }}'s /home directory"
-  command:      snapper -c '{{ username }}' create-config '/var/home/{{ username }}'
+  command:      snapper -c '{{ username }}' create-config '/home/{{ username }}'
   register:     snapper_init
   changed_when:
     - snapper_init.rc == 0
@@ -280,29 +280,29 @@
         backup:   yes
       with_items:
         - /etc/brave/policies/managed/redhat-corp.json
-        - /etc/krb5.conf
-        - /etc/krb5.conf.d/enable_sssd_conf_dir
-        - /etc/krb5.conf.d/fedoraproject_org
-        - /etc/krb5.conf.d/redhat_com
+        #- /etc/krb5.conf
+        #- /etc/krb5.conf.d/enable_sssd_conf_dir
+        #- /etc/krb5.conf.d/fedoraproject_org
+        #- /etc/krb5.conf.d/redhat_com
         - /etc/openldap/ldap.conf
 
     # -------------------------------------------------------------------------
 
-    - name: Copy VPN profiles into /etc [Red Hat]
-      copy:
-        src:      "files/{{ item }}"
-        dest:     "{{ item }}"
-        owner:    root
-        group:    root
-        mode:     0600
-      with_items:
-        - "/etc/NetworkManager/system-connections/Red Hat | Amsterdam VPN.nmconnection"
-        - "/etc/NetworkManager/system-connections/Red Hat | Brno VPN.nmconnection"
-        - "/etc/NetworkManager/system-connections/Red Hat | Global VPN.nmconnection"
-        - "/etc/NetworkManager/system-connections/Red Hat | Raleigh VPN.nmconnection"
+    #- name: Copy VPN profiles into /etc [Red Hat]
+    #  copy:
+    #    src:      "files/{{ item }}"
+    #    dest:     "{{ item }}"
+    #    owner:    root
+    #    group:    root
+    #    mode:     0600
+    #  with_items:
+    #    - "/etc/NetworkManager/system-connections/Red Hat | Amsterdam VPN.nmconnection"
+    #    - "/etc/NetworkManager/system-connections/Red Hat | Brno VPN.nmconnection"
+    #    - "/etc/NetworkManager/system-connections/Red Hat | Global VPN.nmconnection"
+    #    - "/etc/NetworkManager/system-connections/Red Hat | Raleigh VPN.nmconnection"
 
-    - name: Load the new VPN profiles with NetworkManager [Red Hat]
-      command: nmcli connection reload
+    #- name: Load the new VPN profiles with NetworkManager [Red Hat]
+    #  command: nmcli connection reload
 
     # ---| end of redhat_work_config block |-----------------------------------
 
